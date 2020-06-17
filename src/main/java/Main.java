@@ -5,6 +5,7 @@ import com.stream.common.CommonUtils;
 import com.stream.common.CredentialsDTO;
 import com.stream.realdebrid.DebridUtils;
 import com.stream.realdebrid.dtos.*;
+import com.stream.subtitles.YtsSubtitleUtils;
 import com.stream.torrent.TorrentUtils;
 import com.stream.torrent.dtos.MovieDTO;
 import com.stream.torrent.dtos.TorrentDTO;
@@ -58,7 +59,9 @@ public class Main {
                 hashMap11.put(CommonConstants.LINK, selectedLink);
                 String s = DebridUtils.postAndGetData(CommonConstants.DEBRID_API_URL + CommonConstants.UNRESTRICT_LINK_PATH, tokenDTO.getAccessToken(), hashMap11);
                 UnrestrictDTO unrestrictDTO = objectMapper.readValue(s, UnrestrictDTO.class);
-                ProcessBuilder pb = new ProcessBuilder(CommonConstants.VLC_FILEPATH, unrestrictDTO.getDownload());  //"--sub-file=D:\\b.srt"
+                YtsSubtitleUtils.addSubtitleFromImdbId(selectedMovie.getImdbCode());
+                String subs = CommonUtils.getSubtitleCmdString(selectedMovie.getImdbCode());
+                ProcessBuilder pb = new ProcessBuilder(CommonConstants.VLC_FILEPATH, unrestrictDTO.getDownload(), subs);  //"--sub-file=D:\\b.srt"
                 pb.start();
             }
         } catch (IOException e) {

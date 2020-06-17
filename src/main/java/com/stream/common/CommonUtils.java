@@ -1,9 +1,11 @@
 package com.stream.common;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Logger;
 
@@ -34,5 +36,12 @@ public class CommonUtils {
 
     private CommonUtils(){
 
+    }
+
+    public static String getSubtitleCmdString(String imdbCode) {
+        File file = new File("subtitle/uncompressed/"+imdbCode);
+        File[] files = file.listFiles();
+        String result= "--sub-file="+files[1].getAbsolutePath();
+        return result;
     }
 }
