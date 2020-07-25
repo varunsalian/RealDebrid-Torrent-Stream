@@ -38,33 +38,17 @@ public class DownloadTask implements Runnable {
         }
     }
 
-    public String getDownloadLinkFromYS(String url) throws IOException {
+    private String getDownloadLinkFromYS(String url) throws IOException {
         Document document1 = YtsSubtitleUtils.getScrapDataFromUrl(url);
         return document1.select("a[href].btn-icon").first().absUrl("href");
     }
 
-    public  void downloadSubtitle(String url, String fileName) throws IOException {
+    private void downloadSubtitle(String url, String fileName) throws IOException {
         String filePath = "subtitle/compressed/" + imdbID + "/" +fileName + ".zip";
         URL website = new URL(url);
         ReadableByteChannel rbc = Channels.newChannel(CommonUtils.getHttpUrlConnection(website, null).getInputStream());
         FileOutputStream fos = new FileOutputStream(filePath);
         fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
-
-//        String filePath = "subtitle/compressed/"+fileName + ".zip";
-//        try (InputStream fileInputStream = CommonUtils.getHttpUrlConnection(new URL(url), null).getInputStream();
-//             BufferedInputStream bufferedInputStream = new BufferedInputStream(fileInputStream);
-//             FileOutputStream outputStream = new FileOutputStream(new File(filePath))) {
-//            int data;
-//            while ((data=bufferedInputStream.read())!=-1){
-//                outputStream.write(data);
-//            }
-//        } catch (FileNotFoundException e) {
-//            e.printStackTrace();
-//        } catch (MalformedURLException e) {
-//            e.printStackTrace();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
     }
 
     private  void unzip(String zipFilePath, String destDir) {

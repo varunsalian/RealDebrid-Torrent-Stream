@@ -1,20 +1,11 @@
 package com.stream.subtitles;
-
-import com.stream.common.CommonConstants;
-import com.stream.common.CommonUtils;
 import org.apache.commons.io.FileUtils;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-
 import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.nio.channels.Channels;
-import java.nio.channels.ReadableByteChannel;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,7 +17,7 @@ import java.util.stream.Collectors;
 
 public class YtsSubtitleUtils {
 
-    public static Document getScrapDataFromUrl(String url) throws IOException {
+    static Document getScrapDataFromUrl(String url) throws IOException {
         Connection.Response response = Jsoup.connect(url)
                 .ignoreContentType(true)
                 .userAgent("Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11")
@@ -38,7 +29,7 @@ public class YtsSubtitleUtils {
         return document;
     }
 
-    public static List<Map<String, String>> parseTable(Document doc, int tableOrder) {
+    private static List<Map<String, String>> parseTable(Document doc, int tableOrder) {
         Element table = doc.select("table").get(tableOrder);
         Elements rows = table.select("tr");
         Elements first = rows.get(0).select("th,td");
@@ -66,7 +57,7 @@ public class YtsSubtitleUtils {
         return listMap;
     }
 
-    public static List<Map<String, String>> filterEnglishSubs(List<Map<String, String>> dd) {
+    private static List<Map<String, String>> filterEnglishSubs(List<Map<String, String>> dd) {
         return dd.stream().filter(a -> a.get("language").equals("English")).collect(Collectors.toList());
     }
 
