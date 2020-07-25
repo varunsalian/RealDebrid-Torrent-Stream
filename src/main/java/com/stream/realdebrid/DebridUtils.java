@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.stream.common.CommonUtils;
 import com.stream.common.CredentialsDTO;
+import com.stream.exceptions.RealDebridException;
 import com.stream.realdebrid.dtos.*;
 import com.stream.torrent.dtos.MovieDTO;
 import com.stream.common.CommonConstants;
@@ -216,12 +217,12 @@ public class DebridUtils {
         return id;
     }
 
-    public static String getLinkOfSelectedTorrentFromTorrentInfo(TorrentInfoDTO selectedTorrent, List<AllTorrentsInfoDTO> allinfo) {
+    public static String getLinkOfSelectedTorrentFromTorrentInfo(TorrentInfoDTO selectedTorrent, List<AllTorrentsInfoDTO> allinfo) throws RealDebridException {
         for(AllTorrentsInfoDTO allTorrentsInfoDTO: allinfo){
-            if(selectedTorrent.getHash().equals(allTorrentsInfoDTO.getHash()))
+            if(selectedTorrent.getHash().equals(allTorrentsInfoDTO.getHash()) && !allTorrentsInfoDTO.getLinks().isEmpty())
                 return allTorrentsInfoDTO.getLinks().get(0);
         }
-        return null;
+        throw new RealDebridException("File not available in the server");
     }
 
     public static void removeNonInstantlyAvailableTorrents(List<MovieDTO> movieDTOS) throws IOException {

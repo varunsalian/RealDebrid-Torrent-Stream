@@ -4,6 +4,7 @@ import com.stream.common.CommonConstants;
 import com.stream.common.CommonUtils;
 import com.stream.common.CredentialsDTO;
 import com.stream.exceptions.ConnectionException;
+import com.stream.exceptions.RealDebridException;
 import com.stream.realdebrid.DebridUtils;
 import com.stream.realdebrid.dtos.*;
 import com.stream.subtitles.YtsSubtitleUtils;
@@ -75,7 +76,6 @@ public class Main {
             HttpURLConnection httpURLConnection = CommonUtils.getHttpUrlConnection(new URL(magnetDTO.getUri()), tokenDTO.getAccessToken());
             if (httpURLConnection.getResponseCode() != 200)
                 throw new ConnectionException(CommonConstants.UNABLE_TO_CONNECT + httpURLConnection.getResponseCode());
-
             String json = CommonUtils.readJSON(httpURLConnection.getInputStream());
             TorrentInfoDTO torrentInfoDTO = objectMapper.readValue(json, TorrentInfoDTO.class);
 
@@ -87,10 +87,8 @@ public class Main {
 
             //Get the list of all downloaded items, pick the selected one.
             httpURLConnection = CommonUtils.getHttpUrlConnection(new URL(CommonConstants.DEBRID_API_URL + CommonConstants.TORRENT_INFO_PATH), tokenDTO.getAccessToken());
-
             if (httpURLConnection.getResponseCode() != 200)
                 throw new ConnectionException(CommonConstants.UNABLE_TO_CONNECT + httpURLConnection.getResponseCode());
-
             json = CommonUtils.readJSON(httpURLConnection.getInputStream());
             List<AllTorrentsInfoDTO> allinfo = objectMapper.readValue(json, new TypeReference<List<AllTorrentsInfoDTO>>() {
             });
@@ -103,9 +101,11 @@ public class Main {
             UnrestrictDTO unrestrictDTO = objectMapper.readValue(s, UnrestrictDTO.class);
 
             //play the video via VLC
-            ProcessBuilder pb = new ProcessBuilder(CommonConstants.VLC_FILEPATH, unrestrictDTO.getDownload());  //"--sub-file=D:\\b.srt"
+            YtsSubtitleUtils.addSubtitleFromImdbId(selectedMovie.getImdbCode());
+            String subs = CommonUtils.getSubtitleCmdString(selectedMovie.getImdbCode());
+            ProcessBuilder pb = new ProcessBuilder(CommonConstants.VLC_FILEPATH, unrestrictDTO.getDownload(), subs);
             pb.start();
-        } catch (IOException | ConnectionException e) {
+        } catch (IOException | ConnectionException | RealDebridException e) {
             logger.warning(e.getMessage());
         }
     }

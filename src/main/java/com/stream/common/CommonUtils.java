@@ -41,7 +41,7 @@ public class CommonUtils {
     public static String getSubtitleCmdString(String imdbCode) {
         File file = new File("subtitle/uncompressed/"+imdbCode);
         File[] files = file.listFiles();
-        String result= "--sub-file="+files[1].getAbsolutePath();
+        String result= "--sub-file="+files[0].getAbsolutePath();
         return result;
     }
 }

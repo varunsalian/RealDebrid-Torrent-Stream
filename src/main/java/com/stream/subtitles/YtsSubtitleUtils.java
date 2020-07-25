@@ -78,7 +78,7 @@ public class YtsSubtitleUtils {
             ExecutorService pool = Executors.newFixedThreadPool(10);
             FileUtils.deleteDirectory(new File("subtitle"));
             new File("subtitle/compressed/" + imdbId).mkdirs();
-            for (int i=0;i<filterredList.size();i++) {
+            for (int i = 0; i< (Math.min(filterredList.size(), 5)); i++) {
                 pool.submit(new DownloadTask(filterredList.get(i).get("link"), imdbId + "-"+ i, imdbId));
             }
             pool.shutdown();
