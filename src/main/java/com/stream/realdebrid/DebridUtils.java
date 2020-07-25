@@ -21,10 +21,9 @@ import java.util.logging.Logger;
 
 public class DebridUtils {
 
-    static Logger logger = Logger.getLogger(DebridUtils.class.getName());
-//    public static String accessToken;
+    private static Logger logger = Logger.getLogger(DebridUtils.class.getName());
 
-    public static  String repeatedCallToGetSecretId(AuthenticationDTO authenticationDTO) throws IOException, InterruptedException {
+    private static  String repeatedCallToGetSecretId(AuthenticationDTO authenticationDTO) throws IOException, InterruptedException {
         URL url1 = new URL(CommonConstants.DEBRID_OAUTH_URL + CommonConstants.DEBRID_SECRET_ID_PATH+ authenticationDTO.getDeviceCode());
         HttpURLConnection httpURLConnection;
         for(int i=0;i<120;i++) {
@@ -42,7 +41,7 @@ public class DebridUtils {
         return null;
     }
 
-    public static void setUrlPropertiesForPost(HttpURLConnection urlConnection, String accessToken) throws ProtocolException {
+    private static void setUrlPropertiesForPost(HttpURLConnection urlConnection, String accessToken) throws ProtocolException {
         urlConnection.setRequestMethod(CommonConstants.HTTP_POST);
         urlConnection.setDoOutput(true);
         urlConnection.setInstanceFollowRedirects(false);
@@ -55,7 +54,7 @@ public class DebridUtils {
         urlConnection.setRequestProperty(CommonConstants.USER_AGENT, CommonConstants.USER_AGENT_DETAILS);
     }
 
-    public static String generateUrlEncodedAttributesForPost(Map<String, String> hashMap){
+    private static String generateUrlEncodedAttributesForPost(Map<String, String> hashMap){
         final String[] data = {CommonConstants.EMPTY_STRING};
         AtomicInteger i= new AtomicInteger();
         hashMap.forEach((a, b)-> {
@@ -134,7 +133,7 @@ public class DebridUtils {
     }
 
 
-    public static AuthenticationDTO getAuthenticationDTO() throws IOException {
+    private static AuthenticationDTO getAuthenticationDTO() throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
         objectMapper.configure(
@@ -159,7 +158,7 @@ public class DebridUtils {
         return objectMapper;
     }
 
-    public static boolean serializeAnObject(String fileName, Object object) {
+    private static boolean serializeAnObject(String fileName, Object object) {
         try(ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream(fileName))) {
             objectOutputStream.writeObject(object);
         } catch (IOException e) {
