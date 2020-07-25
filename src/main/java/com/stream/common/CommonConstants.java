@@ -80,6 +80,8 @@ public class CommonConstants {
     //SYSTEM SPECIFIC CONSTANTS
     public static final String VLC_FILEPATH = "C:\\Program Files\\VideoLAN\\VLC\\vlc.exe";
 
+    //EXCEPTION MESSAGES
+    public static final String UNABLE_TO_CONNECT = "Unable to connect ";
 
     private CommonConstants(){
 
