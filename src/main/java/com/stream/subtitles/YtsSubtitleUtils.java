@@ -1,13 +1,13 @@
 package com.stream.subtitles;
+import com.stream.fetcher.FetcherUtils;
+import com.stream.fetcher.SourceDTO;
+import com.stream.fetcher.SourceUtils;
 import org.apache.commons.io.FileUtils;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
+
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
@@ -25,47 +25,18 @@ public class YtsSubtitleUtils {
                 .timeout(60000)
                 .followRedirects(true)
                 .execute();
-        Document document = response.parse();
-        return document;
+        return response.parse();
     }
 
-    private static List<Map<String, String>> parseTable(Document doc, int tableOrder) {
-        Element table = doc.select("table").get(tableOrder);
-        Elements rows = table.select("tr");
-        Elements first = rows.get(0).select("th,td");
-        List<String> headers = new ArrayList<String>();
-        for (int i = 0; i < first.size(); i++) {
-            headers.add(first.get(i).text());
-        }
-        headers.add("link");
-        List<Map<String, String>> listMap = new ArrayList<Map<String, String>>();
-        for (int row = 1; row < rows.size(); row++) {
-            Elements colVals = rows.get(row).select("th,td");
-            int colCount = 0;
-            Map<String, String> tuple = new HashMap<String, String>();
-            for (Element colVal : colVals) {
-                if (headers.get(colCount).equals("release")) {
-                    tuple.put(headers.get(colCount), colVal.select("a").text());
-                    tuple.put("link", colVal.select("a").first().absUrl("href"));
-                } else {
-                    tuple.put(headers.get(colCount), colVal.text());
-                }
-                colCount++;
-            }
-            listMap.add(tuple);
-        }
-        return listMap;
+    private static List<Map<String, String>> filterSubs(List<Map<String, String>> subs, String language) {
+        return subs.stream().filter(a -> a.get("language").equals(language)).collect(Collectors.toList());
     }
 
-    private static List<Map<String, String>> filterEnglishSubs(List<Map<String, String>> dd) {
-        return dd.stream().filter(a -> a.get("language").equals("English")).collect(Collectors.toList());
-    }
-
-    public static void addSubtitleFromImdbId(String imdbId){
+    public static void addSubtitleFromImdbId(String imdbId) throws Exception {
         try {
-            Document document = YtsSubtitleUtils.getScrapDataFromUrl("https://yifysubtitles.org/movie-imdb/" + imdbId);
-            List<Map<String, String>> orginalList = YtsSubtitleUtils.parseTable(document,0);
-            List<Map<String, String>> filterredList = YtsSubtitleUtils.filterEnglishSubs(orginalList);
+            Map<String, SourceDTO> torrentSourceDTOS = FetcherUtils.loadSourceFromJson();
+            List<Map<String, String>> searchResult = SourceUtils.getDataFromSource("ytssubs", torrentSourceDTOS, imdbId);
+            List<Map<String, String>> filterredList = YtsSubtitleUtils.filterSubs(searchResult, "English");
             ExecutorService pool = Executors.newFixedThreadPool(10);
             FileUtils.deleteDirectory(new File("subtitle"));
             new File("subtitle/compressed/" + imdbId).mkdirs();

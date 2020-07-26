@@ -88,7 +88,7 @@ public class DownloadTask implements Runnable {
 
     }
 
-    public DownloadTask(String link, String fileName, String imdbID){
+    DownloadTask(String link, String fileName, String imdbID){
         this.link = link;
         this.fileName = fileName;
         this.imdbID = imdbID;

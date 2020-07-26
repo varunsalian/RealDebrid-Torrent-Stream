@@ -107,6 +107,8 @@ public class Main {
             pb.start();
         } catch (IOException | ConnectionException | RealDebridException e) {
             logger.warning(e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }
