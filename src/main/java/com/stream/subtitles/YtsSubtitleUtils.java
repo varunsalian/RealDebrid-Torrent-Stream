@@ -1,4 +1,5 @@
 package com.stream.subtitles;
+import com.stream.common.CommonConstants;
 import com.stream.fetcher.FetcherUtils;
 import com.stream.fetcher.SourceDTO;
 import com.stream.fetcher.SourceUtils;
@@ -13,15 +14,18 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 public class YtsSubtitleUtils {
 
+    private static Logger logger = Logger.getLogger(YtsSubtitleUtils.class.getName());
+
     static Document getScrapDataFromUrl(String url) throws IOException {
         Connection.Response response = Jsoup.connect(url)
                 .ignoreContentType(true)
-                .userAgent("Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11")
-                .referrer("http://www.google.com")
+                .userAgent(CommonConstants.USER_AGENT_DETAILS)
+                .referrer(CommonConstants.HTTP_REFERRER)
                 .timeout(60000)
                 .followRedirects(true)
                 .execute();
@@ -29,24 +33,28 @@ public class YtsSubtitleUtils {
     }
 
     private static List<Map<String, String>> filterSubs(List<Map<String, String>> subs, String language) {
-        return subs.stream().filter(a -> a.get("language").equals(language)).collect(Collectors.toList());
+        return subs.stream().filter(a -> a.get(CommonConstants.SUBS_LANGUAGE).equals(language)).collect(Collectors.toList());
     }
 
     public static void addSubtitleFromImdbId(String imdbId) throws Exception {
         try {
             Map<String, SourceDTO> torrentSourceDTOS = FetcherUtils.loadSourceFromJson();
-            List<Map<String, String>> searchResult = SourceUtils.getDataFromSource("ytssubs", torrentSourceDTOS, imdbId);
-            List<Map<String, String>> filterredList = YtsSubtitleUtils.filterSubs(searchResult, "English");
+            List<Map<String, String>> searchResult = SourceUtils.getDataFromSource(CommonConstants.YTS_SUBS_SOURCE, torrentSourceDTOS, imdbId);
+            List<Map<String, String>> filterredList = YtsSubtitleUtils.filterSubs(searchResult, CommonConstants.SUBS_ENGLISH);
             ExecutorService pool = Executors.newFixedThreadPool(10);
-            FileUtils.deleteDirectory(new File("subtitle"));
-            new File("subtitle/compressed/" + imdbId).mkdirs();
+            FileUtils.deleteDirectory(new File(CommonConstants.SUBS_ROOT_FOLDER));
+            new File(CommonConstants.SUBS_COMPRESSED_FOLDER + imdbId).mkdirs();
             for (int i = 0; i< (Math.min(filterredList.size(), 5)); i++) {
-                pool.submit(new DownloadTask(filterredList.get(i).get("link"), imdbId + "-"+ i, imdbId));
+                pool.submit(new DownloadTask(filterredList.get(i).get(CommonConstants.SUBS_DOWNLOAD_LINK), imdbId + CommonConstants.SYMBOL_HYPHEN+ i, imdbId));
             }
             pool.shutdown();
             pool.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS);
         } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
+            logger.warning(e.getMessage());
         }
+    }
+
+    private YtsSubtitleUtils(){
+
     }
 }
