@@ -105,10 +105,8 @@ public class Main {
             String subs = CommonUtils.getSubtitleCmdString(selectedMovie.getImdbCode());
             ProcessBuilder pb = new ProcessBuilder(CommonConstants.VLC_FILEPATH, unrestrictDTO.getDownload(), subs);
             pb.start();
-        } catch (IOException | ConnectionException | RealDebridException e) {
+        } catch (RealDebridException | Exception e) {
             logger.warning(e.getMessage());
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 }

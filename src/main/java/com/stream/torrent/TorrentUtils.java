@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.stream.common.CommonConstants;
 import com.stream.common.CommonUtils;
+import com.stream.exceptions.ItemNotFoundException;
 import com.stream.realdebrid.DebridUtils;
 import com.stream.torrent.dtos.MovieDTO;
 import com.stream.torrent.dtos.TorrentDTO;
@@ -27,10 +28,12 @@ public class TorrentUtils {
         return CommonConstants.MAGNET_URL + torrentHash + CommonConstants.MAGNET_DOWNLOAD + urlEncodedMovieName + CommonConstants.MAGNET_TRACKER;
     }
 
-    private static List<MovieDTO> getMovieDataDtoFromJson(String jsonString) {
+    private static List<MovieDTO> getMovieDataDtoFromJson(String jsonString) throws ItemNotFoundException {
         JSONObject data = (JSONObject) new JSONObject(jsonString).get(CommonConstants.DATA);
-        JSONArray arr = data.getJSONArray(CommonConstants.MOVIES);
-
+        JSONArray arr = null;
+        if(!data.has(CommonConstants.MOVIES))
+            throw new ItemNotFoundException("NO RESULT FOUND");
+        arr = data.getJSONArray(CommonConstants.MOVIES);
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
         objectMapper.configure(
@@ -73,7 +76,7 @@ public class TorrentUtils {
             } else {
                 throw new RuntimeException("HttpResponseCode: " + conn.getResponseCode());
             }
-        } catch (IOException e) {
+        } catch (IOException | ItemNotFoundException e) {
             logger.warning(e.getMessage());
         }
         return dtos;

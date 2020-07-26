@@ -68,7 +68,6 @@ public class FetcherUtils {
             int colCount = 0;
             Map<String, String> tuple = new HashMap<String, String>();
             for (Element colVal : colVals) {
-                System.out.println(colVal + " " + headers.get(colCount));
                 String currentHeader = headers.get(colCount);
                 if (additionalContentRelation.containsValue(currentHeader)) {
                     String tupleData = contentSpecialCase.containsKey(currentHeader) ? selectStringFromCss(contentSpecialCase.get(currentHeader), colVal) : colVal.text();
