@@ -1,5 +1,6 @@
 package com.stream.subtitles;
 import com.stream.common.CommonConstants;
+import com.stream.exceptions.BadTypeException;
 import com.stream.fetcher.FetcherUtils;
 import com.stream.fetcher.SourceDTO;
 import com.stream.fetcher.SourceUtils;
@@ -36,7 +37,7 @@ public class YtsSubtitleUtils {
         return subs.stream().filter(a -> a.get(CommonConstants.SUBS_LANGUAGE).equals(language)).collect(Collectors.toList());
     }
 
-    public static void addSubtitleFromImdbId(String imdbId) throws Exception {
+    public static void addSubtitleFromImdbId(String imdbId) throws BadTypeException {
         try {
             Map<String, SourceDTO> torrentSourceDTOS = FetcherUtils.loadSourceFromJson();
             List<Map<String, String>> searchResult = SourceUtils.getDataFromSource(CommonConstants.YTS_SUBS_SOURCE, torrentSourceDTOS, imdbId);

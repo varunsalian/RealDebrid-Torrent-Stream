@@ -2,6 +2,7 @@ package com.stream.fetcher;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.stream.exceptions.BadTypeException;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -51,7 +52,7 @@ public class FetcherUtils {
         return null;
     }
 
-    public static List<Map<String, String>> fetchTableFromDocument(SourceDTO torrentSourceDTO, Document document) throws Exception {
+    public static List<Map<String, String>> fetchTableFromDocument(SourceDTO torrentSourceDTO, Document document) throws BadTypeException {
         int tableIndex = torrentSourceDTO.getTableIndex() == null ? 0 : torrentSourceDTO.getTableIndex();
         List<String> tableContent = torrentSourceDTO.getTableContent();
         Map<String, String> additionalContentRelation = torrentSourceDTO.getAdditionalContentRelation();
@@ -89,7 +90,7 @@ public class FetcherUtils {
         return listMap;
     }
 
-    private static String selectStringFromCss(Map<String, String> data, Element element) throws Exception {
+    private static String selectStringFromCss(Map<String, String> data, Element element) throws BadTypeException {
         Object elementData = element;
         for (Map.Entry<String, String> entry : data.entrySet()) {
             elementData = CssSelector.getData(entry.getKey(), entry.getValue(), elementData);

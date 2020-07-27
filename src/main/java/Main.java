@@ -1,8 +1,11 @@
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.stream.common.CommonConstants;
 import com.stream.common.CommonUtils;
 import com.stream.common.CredentialsDTO;
+import com.stream.exceptions.BadTypeException;
 import com.stream.exceptions.ConnectionException;
 import com.stream.exceptions.RealDebridException;
 import com.stream.realdebrid.DebridUtils;
@@ -13,6 +16,7 @@ import com.stream.torrent.dtos.MovieDTO;
 import com.stream.torrent.dtos.TorrentDTO;
 import java.io.IOException;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -105,7 +109,7 @@ public class Main {
             String subs = CommonUtils.getSubtitleCmdString(selectedMovie.getImdbCode());
             ProcessBuilder pb = new ProcessBuilder(CommonConstants.VLC_FILEPATH, unrestrictDTO.getDownload(), subs);
             pb.start();
-        } catch (RealDebridException | Exception e) {
+        } catch (RealDebridException | BadTypeException | IOException | ConnectionException e) {
             logger.warning(e.getMessage());
         }
     }
