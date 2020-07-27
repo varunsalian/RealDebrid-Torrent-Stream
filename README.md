@@ -12,6 +12,7 @@ Technical Overview
 2. Using yify api, deatils of all the movies matching the query is fetched. 
 3. An api request is sent to Real-debrid to check if the available(cached) torrent hashes match the hashes of the searched torrents.
 4. All the non cached torrents are removed and the user is shown the available torrents.
+5. Suitable Subtitle is downloaded using yifysubtitles.
 5. Once user selects the required option, the streamble link is fetched and a VLC process is started with the streamable URL.
 
 Direct Download JAR and EXE
