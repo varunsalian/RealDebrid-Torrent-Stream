@@ -36,8 +36,8 @@ public class DownloadTask implements Runnable {
 
     private void deleteFile(String path) {
         File file = new File(path);
-        if(file.exists()){
-           file.delete();
+        if(file.exists() && !file.delete()) {
+            throw new RuntimeException("Unable to delete subtitle file");
         }
     }
 
@@ -64,8 +64,8 @@ public class DownloadTask implements Runnable {
             ZipInputStream zis = new ZipInputStream(fis);
             ZipEntry ze = zis.getNextEntry();
             while(ze != null){
-                String fileName = this.fileName + CommonConstants.SRT_EXTENSION;
-                File newFile = new File(destDir + File.separator + fileName);
+                String filename = this.fileName + CommonConstants.SRT_EXTENSION;
+                File newFile = new File(destDir + File.separator + filename);
                 new File(newFile.getParent()).mkdirs();
                 FileOutputStream fos = new FileOutputStream(newFile);
                 int len;

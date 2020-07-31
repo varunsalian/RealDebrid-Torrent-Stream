@@ -1,5 +1,6 @@
 package com.stream.common;
 
+import com.stream.exceptions.LinkUnavailableException;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,7 +39,28 @@ public class CommonUtils {
     public static String getSubtitleCmdString(String imdbCode) {
         File file = new File(CommonConstants.SUBS_UNCOMPRESSED_FOLDER+imdbCode);
         File[] files = file.listFiles();
-        String result= "--sub-file="+files[0].getAbsolutePath();
+        String result = null;
+        if(files!=null && files.length>0)
+            result= "--sub-file="+files[0].getAbsolutePath();
         return result;
+    }
+
+    public static String askUserSearchQuery() {
+        System.out.println(CommonConstants.USER_INPUT_MOVIE);
+        Scanner scanner = new Scanner(System.in);
+        String searchQuery = scanner.nextLine();
+        searchQuery = searchQuery.replace(CommonConstants.STRING_SPACE, CommonConstants.STRING_UNDERSCORE);
+        return searchQuery;
+    }
+
+    public static void startVlcProcess(String videoLink, String subs) throws IOException, LinkUnavailableException {
+        if(videoLink==null)
+            throw new LinkUnavailableException("Streaming Link For the movie is unavailable");
+        ProcessBuilder pb;
+        if(subs!=null)
+            pb = new ProcessBuilder(CommonConstants.VLC_FILEPATH, videoLink, subs);
+        else
+            pb = new ProcessBuilder(CommonConstants.VLC_FILEPATH, videoLink);
+        pb.start();
     }
 }

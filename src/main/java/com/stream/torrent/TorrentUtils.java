@@ -49,14 +49,6 @@ public class TorrentUtils {
         return dtos;
     }
 
-    public static String askUserSearchQuery() {
-        System.out.println(CommonConstants.USER_INPUT_MOVIE);
-        Scanner scanner = new Scanner(System.in);
-        String searchQuery = scanner.nextLine();
-        searchQuery = searchQuery.replace(CommonConstants.STRING_SPACE, CommonConstants.STRING_UNDERSCORE);
-        return searchQuery;
-    }
-
     private static Integer askUserOption() {
         System.out.println(CommonConstants.USER_INPUT_SELECT_OPTION);
         Scanner scanner = new Scanner(System.in);

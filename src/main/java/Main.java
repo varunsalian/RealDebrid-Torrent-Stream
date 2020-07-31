@@ -1,12 +1,11 @@
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.stream.common.CommonConstants;
 import com.stream.common.CommonUtils;
 import com.stream.common.CredentialsDTO;
 import com.stream.exceptions.BadTypeException;
 import com.stream.exceptions.ConnectionException;
+import com.stream.exceptions.LinkUnavailableException;
 import com.stream.exceptions.RealDebridException;
 import com.stream.realdebrid.DebridUtils;
 import com.stream.realdebrid.dtos.*;
@@ -16,7 +15,6 @@ import com.stream.torrent.dtos.MovieDTO;
 import com.stream.torrent.dtos.TorrentDTO;
 import java.io.IOException;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -24,12 +22,12 @@ import java.util.logging.Logger;
 
 public class Main {
     private static Logger logger = Logger.getLogger(Main.class.getName());
-
     private static ObjectMapper objectMapper = DebridUtils.getObjectMapper();
 
     public static void main(String[] args) {
         manageRealDebridAuthentication();
-        ytsMovieStream();
+        String searchQuery = CommonUtils.askUserSearchQuery();
+        ytsMovieStream(searchQuery);
     }
 
     private static void manageRealDebridAuthentication() {
@@ -57,7 +55,7 @@ public class Main {
         }
     }
 
-    private static void ytsMovieStream() {
+    private static void ytsMovieStream(String searchQuery) {
         try {
             //Get Real Debrid access token
             //TODO: check if token has expired, (currently new access token is fetched everytime)
@@ -65,7 +63,6 @@ public class Main {
             TokenDTO tokenDTO = credentialsDTO.getTokenDTO();
 
             //Search for a movie and select the quality
-            String searchQuery = TorrentUtils.askUserSearchQuery();
             MovieDTO selectedMovie = TorrentUtils.searchAndSelectMovie(searchQuery);
             TorrentDTO selectedTorrent = TorrentUtils.selectQuality(selectedMovie);
 
@@ -107,9 +104,8 @@ public class Main {
             //play the video via VLC
             YtsSubtitleUtils.addSubtitleFromImdbId(selectedMovie.getImdbCode());
             String subs = CommonUtils.getSubtitleCmdString(selectedMovie.getImdbCode());
-            ProcessBuilder pb = new ProcessBuilder(CommonConstants.VLC_FILEPATH, unrestrictDTO.getDownload(), subs);
-            pb.start();
-        } catch (RealDebridException | BadTypeException | IOException | ConnectionException e) {
+            CommonUtils.startVlcProcess(unrestrictDTO.getDownload(), subs);
+        } catch (RealDebridException | BadTypeException | IOException | ConnectionException | LinkUnavailableException e) {
             logger.warning(e.getMessage());
         }
     }
