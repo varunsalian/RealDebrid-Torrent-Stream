@@ -208,10 +208,10 @@ public class DebridUtils {
         int id=1;
         long highestSize = 0;
         for(int i=0; i <files.size();i++){
-            if(files.get(i).getBytes()>highestSize)    //WAS 0
+            if(files.get(i).getBytes()>highestSize)
             {
-                id = files.get(i).getId();     //WAS 0
-                highestSize = files.get(i).getBytes();      // WAS )
+                id = files.get(i).getId();
+                highestSize = files.get(i).getBytes();
             }
         }
         return id;

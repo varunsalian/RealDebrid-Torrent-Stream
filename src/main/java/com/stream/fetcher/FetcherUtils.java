@@ -18,7 +18,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 public class FetcherUtils {
-    public static Document getScrapDataFromUrl(String url) throws IOException {
+    static Document getScrapDataFromUrl(String url) throws IOException {
         Connection.Response response = Jsoup.connect(url)
                 .ignoreContentType(true)
                 .userAgent("Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11")
@@ -26,8 +26,7 @@ public class FetcherUtils {
                 .timeout(60000)
                 .followRedirects(true)
                 .execute();
-        Document document = response.parse();
-        return document;
+        return response.parse();
     }
 
     private static void parser(String path, Class dtoClass, Consumer<Object> consumer) throws IOException {
@@ -52,7 +51,7 @@ public class FetcherUtils {
         return null;
     }
 
-    public static List<Map<String, String>> fetchTableFromDocument(SourceDTO torrentSourceDTO, Document document) throws BadTypeException {
+    static List<Map<String, String>> fetchTableFromDocument(SourceDTO torrentSourceDTO, Document document) throws BadTypeException {
         int tableIndex = torrentSourceDTO.getTableIndex() == null ? 0 : torrentSourceDTO.getTableIndex();
         List<String> tableContent = torrentSourceDTO.getTableContent();
         Map<String, String> additionalContentRelation = torrentSourceDTO.getAdditionalContentRelation();
@@ -115,7 +114,12 @@ public class FetcherUtils {
         return torrentSourceDTOS;
     }
 
+    //TODO
     private static boolean validateTorrentSource(SourceDTO torrentSourceDTO) {
         return true;
+    }
+
+    private FetcherUtils(){
+
     }
 }
