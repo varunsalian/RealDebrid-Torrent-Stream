@@ -70,7 +70,7 @@ public class DebridUtils {
         return data[0];
     }
 
-    public static String postAndGetAccessToken(String clientId, String clientSecret, String deviceCode, String grantType) throws IOException {
+    private static String postAndGetAccessToken(String clientId, String clientSecret, String deviceCode, String grantType) throws IOException {
         URL url;
         HttpURLConnection urlConnection = null;
 
@@ -159,30 +159,21 @@ public class DebridUtils {
         return objectMapper;
     }
 
-    private static boolean serializeAnObject(String fileName, Object object) {
-        try(ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream(fileName))) {
-            objectOutputStream.writeObject(object);
-        } catch (IOException e) {
-            logger.warning(e.getMessage());
-        }
-        return true;
-    }
-
-    public static void dooer() throws IOException, InterruptedException {
+    private static void dooer() throws IOException, InterruptedException {
         ObjectMapper objectMapper = getObjectMapper();
         String jsonString;
 
         AuthenticationDTO authenticationDTO = getAuthenticationDTO();
         if (authenticationDTO==null)
             throw new RuntimeException(CommonConstants.ERROR_AUTHENTICATION_CONNECTION_FAILED);
-        serializeAnObject(CommonConstants.AUTHENTICATION_TXT, authenticationDTO);
+        CommonUtils.serializeAnObject(CommonConstants.AUTHENTICATION_TXT, authenticationDTO);
 
         jsonString = repeatedCallToGetSecretId(authenticationDTO);
         if (jsonString==null)
             throw new RuntimeException(CommonConstants.ERROR_AUTHENTICATION_CONNECTION_FAILED);
         ClientDTO clientDTO = objectMapper.readValue(jsonString,ClientDTO.class);
         System.out.println(clientDTO.toString());
-        serializeAnObject(CommonConstants.CREDENTIALS_TXT, clientDTO);
+        CommonUtils.serializeAnObject(CommonConstants.CREDENTIALS_TXT, clientDTO);
 
 
         jsonString = postAndGetAccessToken(clientDTO.getClientID(), clientDTO.getClientSecret(), authenticationDTO.getDeviceCode(), CommonConstants.GRANT_TYPE_URL);
@@ -193,12 +184,12 @@ public class DebridUtils {
         System.out.println(tokenDTO);
     }
 
-    public static boolean checkIfFileExists(String fileName){
+    private static boolean checkIfFileExists(String fileName){
         File file = new File(fileName);
         return file.exists();
     }
 
-    public static void deserializeAuthenticationAndClientDTO(AuthenticationDTO authenticationDTO, ClientDTO credentialsDTO) throws IOException, ClassNotFoundException {
+    private static void deserializeAuthenticationAndClientDTO(AuthenticationDTO authenticationDTO, ClientDTO credentialsDTO) throws IOException, ClassNotFoundException {
         authenticationDTO.setAll((AuthenticationDTO) new ObjectInputStream(new FileInputStream(CommonConstants.AUTHENTICATION_TXT)).readObject());
         credentialsDTO.setAll((ClientDTO) new ObjectInputStream(new FileInputStream(CommonConstants.CREDENTIALS_TXT)).readObject());
     }
@@ -227,7 +218,7 @@ public class DebridUtils {
 
     public static void removeNonInstantlyAvailableTorrents(List<MovieDTO> movieDTOS) throws IOException {
         List<String> hashes = getHashesOfTorrentsFromMovieDTO(movieDTOS);
-        String hashesString = convertHashesToRequestUrl(hashes);
+        String hashesString = CommonUtils.convertHashesToRequestUrl(hashes);
         String json = getRequestToCheckInstantAvailability(hashesString);
         JSONObject jsonObject = new JSONObject(json);
         Map instantAvailabilityMap = jsonObject.toMap();
@@ -252,22 +243,36 @@ public class DebridUtils {
         return CommonUtils.readJSON(checkedConnection.getInputStream());
     }
 
-    private static String convertHashesToRequestUrl(List<String> hashes) {
-        StringBuilder stringBuilder = new StringBuilder();
-        for (int i = 0; i < hashes.size(); i++) {
-            if (i != hashes.size() - 1)
-                stringBuilder.append(hashes.get(i)).append(CommonConstants.FORWARD_SLASH);
-            else {
-                stringBuilder.append(hashes.get(i));
-            }
-        }
-        return stringBuilder.toString();
-    }
-
     private static List<String> getHashesOfTorrentsFromMovieDTO(List<MovieDTO> movieDTOS) {
         List<String> hashes = new ArrayList<>();
         movieDTOS.forEach(movieDTO -> movieDTO.getTorrents().forEach(torrentDTO -> hashes.add(torrentDTO.getHash())));
         return hashes;
+    }
+
+    public static void manageRealDebridAuthentication() {
+        ObjectMapper objectMapper = DebridUtils.getObjectMapper();
+        try {
+            AuthenticationDTO authenticationDTO = new AuthenticationDTO();
+            ClientDTO clientDTO = new ClientDTO();
+            if (!(DebridUtils.checkIfFileExists(CommonConstants.AUTHENTICATION_TXT) && DebridUtils.checkIfFileExists(CommonConstants.CREDENTIALS_TXT))) {
+                DebridUtils.dooer();
+            }
+            DebridUtils.deserializeAuthenticationAndClientDTO(authenticationDTO, clientDTO);
+            String tokenJson = DebridUtils.postAndGetAccessToken(clientDTO.getClientID(), clientDTO.getClientSecret(), authenticationDTO.getDeviceCode(), CommonConstants.GRANT_TYPE_URL);
+            if (tokenJson == null) {
+                DebridUtils.dooer();
+                DebridUtils.deserializeAuthenticationAndClientDTO(authenticationDTO, clientDTO);
+                tokenJson = DebridUtils.postAndGetAccessToken(clientDTO.getClientID(), clientDTO.getClientSecret(), authenticationDTO.getDeviceCode(), CommonConstants.GRANT_TYPE_URL);
+            }
+            TokenDTO tokenDTO = objectMapper.readValue(tokenJson, TokenDTO.class);
+            CredentialsDTO credentialsDTO = CredentialsDTO.getInstance();
+
+            credentialsDTO.setAuthenticationDTO(authenticationDTO);
+            credentialsDTO.setClientDTO(clientDTO);
+            credentialsDTO.setTokenDTO(tokenDTO);
+        } catch (InterruptedException | IOException | ClassNotFoundException e) {
+            logger.warning(e.getMessage());
+        }
     }
 
     private DebridUtils(){

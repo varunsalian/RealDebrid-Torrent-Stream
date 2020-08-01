@@ -3,10 +3,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.stream.common.CommonConstants;
 import com.stream.common.CommonUtils;
 import com.stream.common.CredentialsDTO;
-import com.stream.exceptions.BadTypeException;
-import com.stream.exceptions.ConnectionException;
-import com.stream.exceptions.LinkUnavailableException;
-import com.stream.exceptions.RealDebridException;
+import com.stream.exceptions.*;
 import com.stream.realdebrid.DebridUtils;
 import com.stream.realdebrid.dtos.*;
 import com.stream.subtitles.YtsSubtitleUtils;
@@ -25,34 +22,9 @@ public class Main {
     private static ObjectMapper objectMapper = DebridUtils.getObjectMapper();
 
     public static void main(String[] args) {
-        manageRealDebridAuthentication();
+        DebridUtils.manageRealDebridAuthentication();
         String searchQuery = CommonUtils.askUserSearchQuery();
         ytsMovieStream(searchQuery);
-    }
-
-    private static void manageRealDebridAuthentication() {
-        try {
-            AuthenticationDTO authenticationDTO = new AuthenticationDTO();
-            ClientDTO clientDTO = new ClientDTO();
-            if (!(DebridUtils.checkIfFileExists(CommonConstants.AUTHENTICATION_TXT) && DebridUtils.checkIfFileExists(CommonConstants.CREDENTIALS_TXT))) {
-                DebridUtils.dooer();
-            }
-            DebridUtils.deserializeAuthenticationAndClientDTO(authenticationDTO, clientDTO);
-            String tokenJson = DebridUtils.postAndGetAccessToken(clientDTO.getClientID(), clientDTO.getClientSecret(), authenticationDTO.getDeviceCode(), CommonConstants.GRANT_TYPE_URL);
-            if (tokenJson == null) {
-                DebridUtils.dooer();
-                DebridUtils.deserializeAuthenticationAndClientDTO(authenticationDTO, clientDTO);
-                tokenJson = DebridUtils.postAndGetAccessToken(clientDTO.getClientID(), clientDTO.getClientSecret(), authenticationDTO.getDeviceCode(), CommonConstants.GRANT_TYPE_URL);
-            }
-            TokenDTO tokenDTO = objectMapper.readValue(tokenJson, TokenDTO.class);
-            CredentialsDTO credentialsDTO = CredentialsDTO.getInstance();
-
-            credentialsDTO.setAuthenticationDTO(authenticationDTO);
-            credentialsDTO.setClientDTO(clientDTO);
-            credentialsDTO.setTokenDTO(tokenDTO);
-        } catch (InterruptedException | IOException | ClassNotFoundException e) {
-            logger.warning(e.getMessage());
-        }
     }
 
     private static void ytsMovieStream(String searchQuery) {
@@ -105,8 +77,8 @@ public class Main {
             YtsSubtitleUtils.addSubtitleFromImdbId(selectedMovie.getImdbCode());
             String subs = CommonUtils.getSubtitleCmdString(selectedMovie.getImdbCode());
             CommonUtils.startVlcProcess(unrestrictDTO.getDownload(), subs);
-        } catch (RealDebridException | BadTypeException | IOException | ConnectionException | LinkUnavailableException e) {
-            logger.warning(e.getMessage());
+        } catch (RealDebridException | BadTypeException | IOException | ConnectionException | LinkUnavailableException | ItemNotFoundException e) {
+            logger.info(e.getMessage());
         }
     }
 }

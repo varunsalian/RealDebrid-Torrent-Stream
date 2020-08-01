@@ -1,15 +1,18 @@
 package com.stream.common;
 
 import com.stream.exceptions.LinkUnavailableException;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import com.stream.realdebrid.DebridUtils;
+
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.List;
 import java.util.Scanner;
+import java.util.logging.Logger;
 
 public class CommonUtils {
 
+    private static Logger logger = Logger.getLogger(DebridUtils.class.getName());
 
     public static HttpURLConnection getHttpUrlConnection(URL url, String token) throws IOException {
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -62,5 +65,25 @@ public class CommonUtils {
         else
             pb = new ProcessBuilder(CommonConstants.VLC_FILEPATH, videoLink);
         pb.start();
+    }
+
+    public static void serializeAnObject(String fileName, Object object) {
+        try(ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream(fileName))) {
+            objectOutputStream.writeObject(object);
+        } catch (IOException e) {
+            logger.warning(e.getMessage());
+        }
+    }
+
+    public static String convertHashesToRequestUrl(List<String> hashes) {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int i = 0; i < hashes.size(); i++) {
+            if (i != hashes.size() - 1)
+                stringBuilder.append(hashes.get(i)).append(CommonConstants.FORWARD_SLASH);
+            else {
+                stringBuilder.append(hashes.get(i));
+            }
+        }
+        return stringBuilder.toString();
     }
 }

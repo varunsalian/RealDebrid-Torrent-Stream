@@ -55,7 +55,7 @@ public class TorrentUtils {
         return scanner.nextInt();
     }
 
-    private static List<MovieDTO> ytsTorrentSearch(String searchQuery) {
+    private static List<MovieDTO> ytsTorrentSearch(String searchQuery) throws ItemNotFoundException {
         String jsonString;
         List<MovieDTO> dtos = null;
 
@@ -68,13 +68,13 @@ public class TorrentUtils {
             } else {
                 throw new RuntimeException("HttpResponseCode: " + conn.getResponseCode());
             }
-        } catch (IOException | ItemNotFoundException e) {
+        } catch (IOException e) {
             logger.warning(e.getMessage());
         }
         return dtos;
     }
 
-    public static MovieDTO searchAndSelectMovie(String searchQuery) throws IOException {
+    public static MovieDTO searchAndSelectMovie(String searchQuery) throws IOException, ItemNotFoundException {
         MovieDTO selectedMovie = null;
         if (searchQuery != null) {
             List<MovieDTO> movieDTOS = TorrentUtils.ytsTorrentSearch(searchQuery);
