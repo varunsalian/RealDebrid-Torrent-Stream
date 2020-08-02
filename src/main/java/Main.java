@@ -22,13 +22,20 @@ public class Main {
     private static ObjectMapper objectMapper = DebridUtils.getObjectMapper();
 
     public static void main(String[] args) {
-        DebridUtils.manageRealDebridAuthentication();
-        String searchQuery = CommonUtils.askUserSearchQuery();
-        ytsMovieStream(searchQuery);
+        try {
+            DebridUtils.manageRealDebridAuthentication();
+            String searchQuery = CommonUtils.askUserSearchQuery();
+            ytsMovieStream(searchQuery);
+        }
+        catch (ItemNotFoundException | ConnectionException | IOException | LinkUnavailableException | RealDebridException | BadTypeException e) {
+            logger.warning(e.getMessage());
+        } catch (InterruptedException e) {
+            logger.warning(e.getMessage());
+            Thread.currentThread().interrupt();
+        }
     }
 
-    private static void ytsMovieStream(String searchQuery) {
-        try {
+    private static void ytsMovieStream(String searchQuery) throws IOException, ItemNotFoundException, ConnectionException, RealDebridException, BadTypeException, InterruptedException, LinkUnavailableException {
             //Get Real Debrid access token
             //TODO: check if token has expired, (currently new access token is fetched everytime)
             CredentialsDTO credentialsDTO = CredentialsDTO.getInstance();
@@ -77,8 +84,5 @@ public class Main {
             YtsSubtitleUtils.addSubtitleFromImdbId(selectedMovie.getImdbCode());
             String subs = CommonUtils.getSubtitleCmdString(selectedMovie.getImdbCode());
             CommonUtils.startVlcProcess(unrestrictDTO.getDownload(), subs);
-        } catch (RealDebridException | BadTypeException | IOException | ConnectionException | LinkUnavailableException | ItemNotFoundException e) {
-            logger.info(e.getMessage());
-        }
     }
 }

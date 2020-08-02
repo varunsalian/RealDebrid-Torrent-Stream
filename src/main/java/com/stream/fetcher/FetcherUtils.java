@@ -8,14 +8,12 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
 
 public class FetcherUtils {
     static Document getScrapDataFromUrl(String url) throws IOException {
@@ -29,18 +27,11 @@ public class FetcherUtils {
         return response.parse();
     }
 
-    private static void parser(String path, Class dtoClass, Consumer<Object> consumer) throws IOException {
-        File file = new File(path);
-        File[] files = file.listFiles();
+    private static Object parser(String path, Class dtoClass) throws IOException {
+        InputStream file = Thread.currentThread().getContextClassLoader().getResourceAsStream(path);
         ObjectMapper objectMapper = new ObjectMapper();
-        if (files != null) {
-            for (File value : files) {
-                if (value.getName().endsWith(".json")) {
-                    Object obj = objectMapper.readValue(value, dtoClass);
-                    consumer.accept((obj));
-                }
-            }
-        }
+        Object obj = objectMapper.readValue(file, dtoClass);
+        return obj;
     }
 
     private static String getMapKeyByValue(Map<String, String> map, String value) {
@@ -103,21 +94,10 @@ public class FetcherUtils {
         return torrentSourceDTOS.get(page);
     }
 
-    public static Map<String, SourceDTO> loadSourceFromJson() throws IOException {
-        Map<String, SourceDTO> torrentSourceDTOS = new HashMap<>();
-        FetcherUtils.parser("data/", SourceDTO.class, (dtoClass)-> {
-            SourceDTO torrentSourceDTO = (SourceDTO) dtoClass;
-            boolean validationSuccess = validateTorrentSource(torrentSourceDTO);
-            if(validationSuccess)
-                torrentSourceDTOS.put(torrentSourceDTO.getSourceName(), torrentSourceDTO);
-        });
-        return torrentSourceDTOS;
+    public static SourceDTO loadSourceFromJson(String sourceName) throws IOException {
+        return ((SourceDTO)parser(sourceName, SourceDTO.class));
     }
 
-    //TODO
-    private static boolean validateTorrentSource(SourceDTO torrentSourceDTO) {
-        return true;
-    }
 
     private FetcherUtils(){
 

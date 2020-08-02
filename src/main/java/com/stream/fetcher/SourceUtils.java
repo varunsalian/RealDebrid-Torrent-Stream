@@ -8,8 +8,8 @@ import java.util.Map;
 
 public class SourceUtils {
 
-    public static List<Map<String, String>> getDataFromSource(String sourceName, Map<String, SourceDTO> torrentSourceDTOS, String searchQuery) throws BadTypeException, IOException {
-        Document document = FetcherUtils.getScrapDataFromUrl(torrentSourceDTOS.get(sourceName).getBaseUrl()+searchQuery);
-        return  FetcherUtils.fetchTableFromDocument(torrentSourceDTOS.get(sourceName), document);
+    public static List<Map<String, String>> getDataFromSource(SourceDTO torrentSourceDTO, String searchQuery) throws BadTypeException, IOException {
+        Document document = FetcherUtils.getScrapDataFromUrl(torrentSourceDTO.getBaseUrl()+searchQuery);
+        return  FetcherUtils.fetchTableFromDocument(torrentSourceDTO, document);
     }
 }

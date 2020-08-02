@@ -37,10 +37,10 @@ public class YtsSubtitleUtils {
         return subs.stream().filter(a -> a.get(CommonConstants.SUBS_LANGUAGE).equals(language)).collect(Collectors.toList());
     }
 
-    public static void addSubtitleFromImdbId(String imdbId) throws BadTypeException {
+    public static void addSubtitleFromImdbId(String imdbId) throws BadTypeException, InterruptedException {
         try {
-            Map<String, SourceDTO> torrentSourceDTOS = FetcherUtils.loadSourceFromJson();
-            List<Map<String, String>> searchResult = SourceUtils.getDataFromSource(CommonConstants.YTS_SUBS_SOURCE, torrentSourceDTOS, imdbId);
+            SourceDTO torrentSourceDTO = FetcherUtils.loadSourceFromJson(CommonConstants.YTS_SUBS_SOURCE);
+            List<Map<String, String>> searchResult = SourceUtils.getDataFromSource(torrentSourceDTO, imdbId);
             List<Map<String, String>> filterredList = YtsSubtitleUtils.filterSubs(searchResult, CommonConstants.SUBS_ENGLISH);
             ExecutorService pool = Executors.newFixedThreadPool(10);
             FileUtils.deleteDirectory(new File(CommonConstants.SUBS_ROOT_FOLDER));
@@ -50,7 +50,7 @@ public class YtsSubtitleUtils {
             }
             pool.shutdown();
             pool.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS);
-        } catch (IOException | InterruptedException e) {
+        } catch (IOException e) {
             logger.warning(e.getMessage());
         }
     }
