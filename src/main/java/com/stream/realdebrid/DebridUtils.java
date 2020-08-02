@@ -166,6 +166,9 @@ public class DebridUtils {
         AuthenticationDTO authenticationDTO = getAuthenticationDTO();
         if (authenticationDTO==null)
             throw new RuntimeException(CommonConstants.ERROR_AUTHENTICATION_CONNECTION_FAILED);
+        File dataDirectory = new File(CommonConstants.SUPPORT_DIRECTORY);
+        if(!dataDirectory.exists())
+            dataDirectory.mkdir();
         CommonUtils.serializeAnObject(CommonConstants.AUTHENTICATION_TXT, authenticationDTO);
 
         jsonString = repeatedCallToGetSecretId(authenticationDTO);
@@ -174,7 +177,6 @@ public class DebridUtils {
         ClientDTO clientDTO = objectMapper.readValue(jsonString,ClientDTO.class);
         System.out.println(clientDTO.toString());
         CommonUtils.serializeAnObject(CommonConstants.CREDENTIALS_TXT, clientDTO);
-
 
         jsonString = postAndGetAccessToken(clientDTO.getClientID(), clientDTO.getClientSecret(), authenticationDTO.getDeviceCode(), CommonConstants.GRANT_TYPE_URL);
         if(jsonString==null){

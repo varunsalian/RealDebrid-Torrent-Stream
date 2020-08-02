@@ -52,8 +52,6 @@ public class CommonConstants {
     public static final String DEBRID_API_URL = "https://api.real-debrid.com/rest/1.0";
     public static final String DEBRID_TORRENT_INSTANT_AVAILABILITY_PATH = "/torrents/instantAvailability/";
     public static final String GRANT_TYPE_URL = "http://oauth.net/grant_type/device/1.0";
-
-
     public static final String MAGNET = "magnet";
     public static final String FILES = "files";
     public static final String LINK = "link";
@@ -71,20 +69,21 @@ public class CommonConstants {
     public static final String GRANT_TYPE = "grant_type";
 
     // DESERIALIZATION CONSTANTS
-    public static final String AUTHENTICATION_TXT = "authentication.txt";
-    public static final String CREDENTIALS_TXT = "credentials.txt";
+    public static final String AUTHENTICATION_TXT = "support/authentication.txt";
+    public static final String CREDENTIALS_TXT = "support/credentials.txt";
     public static final String ADD_MAGNET_PATH = "/torrents/addMagnet";
     public static final String SELECT_FILES_PATH = "/torrents/selectFiles/";
     public static final String TORRENT_INFO_PATH = "/torrents";
     public static final String UNRESTRICT_LINK_PATH = "/unrestrict/link";
+    public static final String SUPPORT_DIRECTORY ="support";
 
     //SUBTITLE SPECIFIC CONSTANTS
     public static final String SUBS_LANGUAGE = "language";
     public static final String YTS_SUBS_SOURCE ="data/ytssubs.json";
     public static final String SUBS_ENGLISH ="English";
     public static final String SUBS_ROOT_FOLDER ="subtitle";
-    public static final String SUBS_COMPRESSED_FOLDER ="subtitle/compressed/";
-    public static final String SUBS_UNCOMPRESSED_FOLDER = "subtitle/uncompressed/";
+    public static final String SUBS_COMPRESSED_FOLDER ="support/subtitle/compressed/";
+    public static final String SUBS_UNCOMPRESSED_FOLDER = "support/subtitle/uncompressed/";
     public static final String SUBS_DOWNLOAD_LINK ="link";
     public static final String ZIP_EXTENSION =".zip";
     public static final String SRT_EXTENSION =".srt";

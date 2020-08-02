@@ -1,10 +1,11 @@
 # Default ignored files
 /workspace.xml
 .idea/
-/src/main/resources
+/src/main/resources/META-INF
 out/
 /Torrent.iml
 /authentication.txt
 /credentials.txt
 /target
+/support
 /src/main/java/META-INF
