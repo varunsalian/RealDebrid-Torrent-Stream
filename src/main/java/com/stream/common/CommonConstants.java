@@ -85,6 +85,7 @@ public class CommonConstants {
     public static final String SUBS_COMPRESSED_FOLDER ="support/subtitle/compressed/";
     public static final String SUBS_UNCOMPRESSED_FOLDER = "support/subtitle/uncompressed/";
     public static final String SUBS_DOWNLOAD_LINK ="link";
+    public static final String JSON_EXTENSION =".json";
     public static final String ZIP_EXTENSION =".zip";
     public static final String SRT_EXTENSION =".srt";
     public static final String SUBS_DOWNLOAD_SELECTOR = "a[href].btn-icon";
@@ -93,9 +94,13 @@ public class CommonConstants {
 
     //SYSTEM SPECIFIC CONSTANTS
     public static final String VLC_FILEPATH = "C:\\Program Files\\VideoLAN\\VLC\\vlc.exe";
+    public static final String VLC_JSON_KEY="vlc-path";
 
     //EXCEPTION MESSAGES
     public static final String UNABLE_TO_CONNECT = "Unable to connect ";
+
+    //SYSTEM CONTANTS
+    public static final String APP_PROPERTIES ="app-properties";
 
     private CommonConstants(){
 
