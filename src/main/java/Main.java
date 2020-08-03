@@ -88,6 +88,7 @@ public class Main {
 
     private static void setupProperties() {
         try {
+            CommonUtils.createDirectoryIfNotExists(CommonConstants.SUPPORT_DIRECTORY);
             File targetFile = new File(CommonConstants.SUPPORT_DIRECTORY + CommonConstants.FORWARD_SLASH + CommonConstants.APP_PROPERTIES + CommonConstants.JSON_EXTENSION);
             if (!targetFile.exists()) {
                 InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(CommonConstants.DATA + CommonConstants.FORWARD_SLASH + CommonConstants.APP_PROPERTIES + CommonConstants.JSON_EXTENSION);

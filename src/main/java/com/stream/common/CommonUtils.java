@@ -106,4 +106,10 @@ public class CommonUtils {
         }
         return stringBuilder.toString();
     }
+
+    public static void createDirectoryIfNotExists(String directory) {
+        File file = new File(directory);
+        if(!file.exists())
+            file.mkdirs();
+    }
 }
