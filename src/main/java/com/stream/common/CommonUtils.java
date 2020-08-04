@@ -4,16 +4,10 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.stream.exceptions.LinkUnavailableException;
 import com.stream.realdebrid.DebridUtils;
-import org.json.JSONObject;
-
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.nio.channels.FileChannel;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 import java.util.logging.Logger;
 
 public class CommonUtils {
@@ -63,15 +57,26 @@ public class CommonUtils {
     }
 
     private static Object getDataFromPropertiesFile(String key) throws IOException {
-        Object filePath = null;
+        Object data = null;
         ObjectMapper objectMapper = new ObjectMapper();
         File propertiesFile = new File(CommonConstants.SUPPORT_DIRECTORY + CommonConstants.FORWARD_SLASH + CommonConstants.APP_PROPERTIES + CommonConstants.JSON_EXTENSION);
         if(propertiesFile.exists()) {
             Map<String, Object> properties =  objectMapper.readValue(propertiesFile, new TypeReference<HashMap<String, Object>>() {
             });
-            filePath = properties.getOrDefault(key, null);
+            data = properties.getOrDefault(key, null);
         }
-        return filePath;
+        return data;
+    }
+
+    private static Map<String, Object> getPropertiesFileAsMap() throws IOException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        File propertiesFile = new File(CommonConstants.SUPPORT_DIRECTORY + CommonConstants.FORWARD_SLASH + CommonConstants.APP_PROPERTIES + CommonConstants.JSON_EXTENSION);
+        Map<String, Object> properties = null;
+        if(propertiesFile.exists()) {
+            properties = objectMapper.readValue(propertiesFile, new TypeReference<HashMap<String, Object>>() {
+            });
+        }
+        return properties;
     }
 
     public static void startVlcProcess(String videoLink, String subs) throws IOException, LinkUnavailableException {
@@ -79,12 +84,25 @@ public class CommonUtils {
         filePath = filePath==null? CommonConstants.VLC_FILEPATH: filePath;
         if(videoLink==null)
             throw new LinkUnavailableException("Streaming Link For the movie is unavailable");
-        ProcessBuilder pb;
+        List<String> arguments = new ArrayList<>();
+        arguments.add((String) filePath);
+        arguments.add(videoLink);
+        processVlcArgumentsFromJson(arguments);
         if(subs!=null)
-            pb = new ProcessBuilder((String) filePath, videoLink, subs);
-        else
-            pb = new ProcessBuilder((String) filePath, videoLink);
+            arguments.add(subs);
+        ProcessBuilder pb = new ProcessBuilder(arguments);
         pb.start();
+    }
+
+    private static void processVlcArgumentsFromJson(List<String> arguments) throws IOException {
+        Map<String, Object> properties = getPropertiesFileAsMap();
+        String temp;
+        if(properties!=null) {
+            if (properties.containsKey(CommonConstants.VLC_ASPECT_RATIO_KEY) && (temp = (String) properties.get(CommonConstants.VLC_ASPECT_RATIO_KEY)) != null && !temp.equals(CommonConstants.EMPTY_STRING))
+                arguments.add(CommonConstants.VLC_ASPECT_RATIO_VALUE + CommonConstants.SYMBOL_EQUALS + temp);
+            if(properties.containsKey(CommonConstants.VLC_FULLSCREEN_KEY) && (temp = (String) properties.get(CommonConstants.VLC_FULLSCREEN_KEY)) != null && temp.equalsIgnoreCase(CommonConstants.BOOLEAN_TRUE))
+                arguments.add(CommonConstants.VLC_FULLSCREEN_VALUE);
+        }
     }
 
     public static void serializeAnObject(String fileName, Object object) {

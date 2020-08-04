@@ -1,4 +1,6 @@
 {
   "vlc-path": "C:\\Program Files\\VideoLAN\\VLC\\vlc.exe",
+  "vlc-fullscreen": "true",
+  "vlc-aspect-ratio": "16:9",
   "subs-lang": "English"
 }
