@@ -7,9 +7,9 @@ import com.stream.exceptions.*;
 import com.stream.realdebrid.DebridUtils;
 import com.stream.realdebrid.dtos.*;
 import com.stream.subtitles.YtsSubtitleUtils;
-import com.stream.torrent.TorrentUtils;
-import com.stream.torrent.dtos.MovieDTO;
-import com.stream.torrent.dtos.TorrentDTO;
+import com.stream.ytstorrent.YtsTorrentUtils;
+import com.stream.ytstorrent.dtos.YtsMovieDTO;
+import com.stream.ytstorrent.dtos.YtsTorrentDTO;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -42,12 +42,12 @@ public class Main {
         TokenDTO tokenDTO = credentialsDTO.getTokenDTO();
 
         //Search for a movie and select the quality
-        MovieDTO selectedMovie = TorrentUtils.searchAndSelectMovie(searchQuery);
-        TorrentDTO selectedTorrent = TorrentUtils.selectQuality(selectedMovie);
+        YtsMovieDTO selectedMovie = YtsTorrentUtils.searchAndSelectMovie(searchQuery);
+        YtsTorrentDTO selectedTorrent = YtsTorrentUtils.selectQuality(selectedMovie);
 
         //Get magnet URI of the torrent, add it to real debrid
         LinkedHashMap<String, String> hashMap = new LinkedHashMap<>();
-        String magnet = TorrentUtils.magnetGenerator(selectedTorrent.getHash(), selectedMovie.getSlug());
+        String magnet = YtsTorrentUtils.magnetGenerator(selectedTorrent.getHash(), selectedMovie.getSlug());
         hashMap.put(CommonConstants.MAGNET, magnet);
         String a = DebridUtils.postAndGetData(CommonConstants.DEBRID_API_URL + CommonConstants.ADD_MAGNET_PATH, tokenDTO.getAccessToken(), hashMap);
         AddMagnetDTO magnetDTO = objectMapper.readValue(a, AddMagnetDTO.class);

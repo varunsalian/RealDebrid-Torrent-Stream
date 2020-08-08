@@ -1,8 +1,8 @@
-package com.stream.torrent.dtos;
+package com.stream.ytstorrent.dtos;
 
 import java.util.Objects;
 
-public class TorrentDTO {
+public class YtsTorrentDTO {
 
     private String url;
     private String hash;
@@ -73,7 +73,7 @@ public class TorrentDTO {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        TorrentDTO that = (TorrentDTO) o;
+        YtsTorrentDTO that = (YtsTorrentDTO) o;
         return Objects.equals(url, that.url) &&
                 Objects.equals(hash, that.hash) &&
                 Objects.equals(quality, that.quality) &&
@@ -152,8 +152,8 @@ public class TorrentDTO {
             return this;
         }
 
-        public TorrentDTO build() {
-            TorrentDTO torrentDTO = new TorrentDTO();
+        public YtsTorrentDTO build() {
+            YtsTorrentDTO torrentDTO = new YtsTorrentDTO();
             torrentDTO.setUrl(url);
             torrentDTO.setHash(hash);
             torrentDTO.setQuality(quality);

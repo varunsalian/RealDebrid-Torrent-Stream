@@ -95,12 +95,10 @@ public class CommonConstants {
     //SYSTEM SPECIFIC CONSTANTS
     public static final String VLC_FILEPATH = "C:\\Program Files\\VideoLAN\\VLC\\vlc.exe";
     public static final String VLC_JSON_KEY = "vlc-path";
+    public static final String APP_PROPERTIES = "app-properties";
 
     //EXCEPTION MESSAGES
     public static final String UNABLE_TO_CONNECT = "Unable to connect ";
-
-    //SYSTEM CONTANTS
-    public static final String APP_PROPERTIES = "app-properties";
 
     //VLC SPECIFIC CONSTANTS
     public static final String VLC_ASPECT_RATIO_KEY = "vlc-aspect-ratio";

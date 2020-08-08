@@ -7,9 +7,9 @@ import com.stream.common.CommonUtils;
 import com.stream.common.CredentialsDTO;
 import com.stream.exceptions.RealDebridException;
 import com.stream.realdebrid.dtos.*;
-import com.stream.torrent.dtos.MovieDTO;
+import com.stream.ytstorrent.dtos.YtsMovieDTO;
 import com.stream.common.CommonConstants;
-import com.stream.torrent.dtos.TorrentDTO;
+import com.stream.ytstorrent.dtos.YtsTorrentDTO;
 import org.json.JSONObject;
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -34,8 +34,8 @@ public class DebridUtils {
             else if(httpURLConnection.getResponseCode()==400)
                 throw new RuntimeException(CommonConstants.URL_INVALID);
             else {
-                System.out.println(httpURLConnection.getResponseCode() + "   " + httpURLConnection.getResponseMessage());
-                System.out.println(CommonConstants.ERROR);
+                System.console().writer().println(httpURLConnection.getResponseCode() + "   " + httpURLConnection.getResponseMessage());
+                System.console().writer().println(CommonConstants.ERROR);
             }
             Thread.sleep(5000);
         }
@@ -145,7 +145,7 @@ public class DebridUtils {
         if(httpURLConnection.getResponseCode()==200) {
             String jsonString = CommonUtils.readJSON(httpURLConnection.getInputStream());
             AuthenticationDTO authenticationDTO = objectMapper.readValue(jsonString, AuthenticationDTO.class);
-            System.out.println(CommonConstants.USER_INPUT_GOTO+ authenticationDTO.getVerificationUrl() + CommonConstants.USER_INPUT_ENTER_CODE + authenticationDTO.getUserCode());
+            System.console().writer().println(CommonConstants.USER_INPUT_GOTO+ authenticationDTO.getVerificationUrl() + CommonConstants.USER_INPUT_ENTER_CODE + authenticationDTO.getUserCode());
             return authenticationDTO;
         }
         return null;
@@ -175,7 +175,7 @@ public class DebridUtils {
         if (jsonString==null)
             throw new RuntimeException(CommonConstants.ERROR_AUTHENTICATION_CONNECTION_FAILED);
         ClientDTO clientDTO = objectMapper.readValue(jsonString,ClientDTO.class);
-        System.out.println(clientDTO.toString());
+        System.console().writer().println(clientDTO.toString());
         CommonUtils.serializeAnObject(CommonConstants.CREDENTIALS_TXT, clientDTO);
 
         jsonString = postAndGetAccessToken(clientDTO.getClientID(), clientDTO.getClientSecret(), authenticationDTO.getDeviceCode(), CommonConstants.GRANT_TYPE_URL);
@@ -183,7 +183,7 @@ public class DebridUtils {
             throw new RuntimeException(CommonConstants.ERROR_SESSION_TIMED_OUT);
         }
         TokenDTO tokenDTO = objectMapper.readValue(jsonString, TokenDTO.class);
-        System.out.println(tokenDTO);
+        System.console().writer().println(tokenDTO);
     }
 
     private static boolean checkIfFileExists(String fileName){
@@ -218,16 +218,16 @@ public class DebridUtils {
         throw new RealDebridException("File not available in the server");
     }
 
-    public static void removeNonInstantlyAvailableTorrents(List<MovieDTO> movieDTOS) throws IOException {
+    public static void removeNonInstantlyAvailableTorrents(List<YtsMovieDTO> movieDTOS) throws IOException {
         List<String> hashes = getHashesOfTorrentsFromMovieDTO(movieDTOS);
         String hashesString = CommonUtils.convertHashesToRequestUrl(hashes);
         String json = getRequestToCheckInstantAvailability(hashesString);
         JSONObject jsonObject = new JSONObject(json);
         Map instantAvailabilityMap = jsonObject.toMap();
         for (int i = 0; i < movieDTOS.size(); i++) {
-            MovieDTO movieDTO = movieDTOS.get(i);
+            YtsMovieDTO movieDTO = movieDTOS.get(i);
             for (int j = 0; j < movieDTO.getTorrents().size(); j++) {
-                TorrentDTO torrentDTO = movieDTO.getTorrents().get(j);
+                YtsTorrentDTO torrentDTO = movieDTO.getTorrents().get(j);
                 if (!(instantAvailabilityMap.get(torrentDTO.getHash().toLowerCase()) instanceof Map)) {
                     movieDTO.getTorrents().remove(j--);
                 }
@@ -245,7 +245,7 @@ public class DebridUtils {
         return CommonUtils.readJSON(checkedConnection.getInputStream());
     }
 
-    private static List<String> getHashesOfTorrentsFromMovieDTO(List<MovieDTO> movieDTOS) {
+    private static List<String> getHashesOfTorrentsFromMovieDTO(List<YtsMovieDTO> movieDTOS) {
         List<String> hashes = new ArrayList<>();
         movieDTOS.forEach(movieDTO -> movieDTO.getTorrents().forEach(torrentDTO -> hashes.add(torrentDTO.getHash())));
         return hashes;

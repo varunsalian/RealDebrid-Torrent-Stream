@@ -4,9 +4,12 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.stream.exceptions.LinkUnavailableException;
 import com.stream.realdebrid.DebridUtils;
+import org.apache.commons.io.IOUtils;
+
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -26,13 +29,8 @@ public class CommonUtils {
         return conn;
     }
 
-    public static String readJSON(InputStream inputStream){
-        Scanner sc = new Scanner(inputStream);
-        StringBuilder jsonString = new StringBuilder(CommonConstants.EMPTY_STRING);
-        while(sc.hasNext())
-            jsonString.append(sc.nextLine());
- //        sc.close();
-        return jsonString.toString();
+    public static String readJSON(InputStream inputStream) throws IOException {
+        return  IOUtils.toString(inputStream, StandardCharsets.UTF_8);
     }
 
     private CommonUtils(){
@@ -49,9 +47,8 @@ public class CommonUtils {
     }
 
     public static String askUserSearchQuery() {
-        System.out.println(CommonConstants.USER_INPUT_MOVIE);
-        Scanner scanner = new Scanner(System.in);
-        String searchQuery = scanner.nextLine();
+        System.console().writer().println(CommonConstants.USER_INPUT_MOVIE);
+        String searchQuery = System.console().readLine();
         searchQuery = searchQuery.replace(CommonConstants.STRING_SPACE, CommonConstants.STRING_UNDERSCORE);
         return searchQuery;
     }
@@ -130,4 +127,5 @@ public class CommonUtils {
         if(!file.exists())
             file.mkdirs();
     }
+
 }
