@@ -42,16 +42,21 @@ public class CredentialsDTO {
     }
 
     public static CredentialsDTO getInstance(){
-        if (credentialsDTO==null)
-            credentialsDTO =  new CredentialsDTO();
+        if (credentialsDTO==null) {
+            credentialsDTO = new CredentialsDTO();
+        }
         return credentialsDTO;
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        CredentialsDTO that = (CredentialsDTO) o;
+    public boolean equals(Object object) {
+        if (this == object) {
+            return true;
+        }
+        if (object == null || getClass() != object.getClass()) {
+            return false;
+        }
+        CredentialsDTO that = (CredentialsDTO) object;
         return Objects.equals(authenticationDTO, that.authenticationDTO) &&
                 Objects.equals(clientDTO, that.clientDTO) &&
                 Objects.equals(tokenDTO, that.tokenDTO);

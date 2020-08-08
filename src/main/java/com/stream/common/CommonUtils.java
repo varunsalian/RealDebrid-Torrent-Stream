@@ -41,8 +41,9 @@ public class CommonUtils {
         File file = new File(CommonConstants.SUBS_UNCOMPRESSED_FOLDER+imdbCode);
         File[] files = file.listFiles();
         String result = null;
-        if(files!=null && files.length>0)
-            result= "--sub-file="+files[0].getAbsolutePath();
+        if(files!=null && files.length>0) {
+            result = "--sub-file=" + files[0].getAbsolutePath();
+        }
         return result;
     }
 
@@ -79,26 +80,30 @@ public class CommonUtils {
     public static void startVlcProcess(String videoLink, String subs) throws IOException, LinkUnavailableException {
         Object filePath = getDataFromPropertiesFile(CommonConstants.VLC_JSON_KEY);
         filePath = filePath==null? CommonConstants.VLC_FILEPATH: filePath;
-        if(videoLink==null)
+        if(videoLink==null) {
             throw new LinkUnavailableException("Streaming Link For the movie is unavailable");
+        }
         List<String> arguments = new ArrayList<>();
         arguments.add((String) filePath);
         arguments.add(videoLink);
         processVlcArgumentsFromJson(arguments);
-        if(subs!=null)
+        if(subs!=null) {
             arguments.add(subs);
-        ProcessBuilder pb = new ProcessBuilder(arguments);
-        pb.start();
+        }
+        ProcessBuilder process = new ProcessBuilder(arguments);
+        process.start();
     }
 
     private static void processVlcArgumentsFromJson(List<String> arguments) throws IOException {
         Map<String, Object> properties = getPropertiesFileAsMap();
         String temp;
         if(properties!=null) {
-            if (properties.containsKey(CommonConstants.VLC_ASPECT_RATIO_KEY) && (temp = (String) properties.get(CommonConstants.VLC_ASPECT_RATIO_KEY)) != null && !temp.equals(CommonConstants.EMPTY_STRING))
+            if (properties.containsKey(CommonConstants.VLC_ASPECT_RATIO_KEY) && (temp = (String) properties.get(CommonConstants.VLC_ASPECT_RATIO_KEY)) != null && !temp.equals(CommonConstants.EMPTY_STRING)) {
                 arguments.add(CommonConstants.VLC_ASPECT_RATIO_VALUE + CommonConstants.SYMBOL_EQUALS + temp);
-            if(properties.containsKey(CommonConstants.VLC_FULLSCREEN_KEY) && (temp = (String) properties.get(CommonConstants.VLC_FULLSCREEN_KEY)) != null && temp.equalsIgnoreCase(CommonConstants.BOOLEAN_TRUE))
+            }
+            if(properties.containsKey(CommonConstants.VLC_FULLSCREEN_KEY) && (temp = (String) properties.get(CommonConstants.VLC_FULLSCREEN_KEY)) != null && temp.equalsIgnoreCase(CommonConstants.BOOLEAN_TRUE)) {
                 arguments.add(CommonConstants.VLC_FULLSCREEN_VALUE);
+            }
         }
     }
 
@@ -113,8 +118,9 @@ public class CommonUtils {
     public static String convertHashesToRequestUrl(List<String> hashes) {
         StringBuilder stringBuilder = new StringBuilder();
         for (int i = 0; i < hashes.size(); i++) {
-            if (i != hashes.size() - 1)
+            if (i != hashes.size() - 1) {
                 stringBuilder.append(hashes.get(i)).append(CommonConstants.FORWARD_SLASH);
+            }
             else {
                 stringBuilder.append(hashes.get(i));
             }
@@ -124,8 +130,9 @@ public class CommonUtils {
 
     public static void createDirectoryIfNotExists(String directory) {
         File file = new File(directory);
-        if(!file.exists())
+        if(!file.exists()) {
             file.mkdirs();
+        }
     }
 
 }

@@ -36,8 +36,9 @@ public class FetcherUtils {
 
     private static String getMapKeyByValue(Map<String, String> map, String value) {
         for (Map.Entry<String, String> s : map.entrySet()) {
-            if (s.getValue().equals(value))
+            if (s.getValue().equals(value)) {
                 return s.getKey();
+            }
         }
         return null;
     }
@@ -72,8 +73,9 @@ public class FetcherUtils {
                     tuple.put(headers.get(colCount), colVal.text());
                 }
                 colCount++;
-                if(colCount>=headers.size())
+                if(colCount>=headers.size()) {
                     break;
+                }
             }
             listMap.add(tuple);
         }
@@ -85,8 +87,9 @@ public class FetcherUtils {
         for (Map.Entry<String, String> entry : data.entrySet()) {
             elementData = CssSelector.getData(entry.getKey(), entry.getValue(), elementData);
         }
-        if (elementData instanceof String)
+        if (elementData instanceof String) {
             return (String) elementData;
+        }
         return null;
     }
 

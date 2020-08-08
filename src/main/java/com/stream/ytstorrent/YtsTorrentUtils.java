@@ -30,8 +30,9 @@ public class YtsTorrentUtils {
     private static List<YtsMovieDTO> getMovieDataDtoFromJson(String jsonString) throws ItemNotFoundException {
         JSONObject data = (JSONObject) new JSONObject(jsonString).get(CommonConstants.DATA);
         JSONArray arr = null;
-        if(!data.has(CommonConstants.MOVIES))
+        if(!data.has(CommonConstants.MOVIES)) {
             throw new ItemNotFoundException("NO RESULT FOUND");
+        }
         arr = data.getJSONArray(CommonConstants.MOVIES);
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
@@ -86,8 +87,8 @@ public class YtsTorrentUtils {
 
     private static YtsMovieDTO selectMovie(List<YtsMovieDTO> movieDTOS) {
         YtsMovieDTO selectedMovie = null;
-        AtomicInteger i = new AtomicInteger(1);
-        final Map<Integer, YtsMovieDTO> mapOfDtos = movieDTOS.stream().collect(Collectors.toMap(c -> i.getAndIncrement(), c -> c));
+        AtomicInteger integer = new AtomicInteger(1);
+        final Map<Integer, YtsMovieDTO> mapOfDtos = movieDTOS.stream().collect(Collectors.toMap(c -> integer.getAndIncrement(), c -> c));
         mapOfDtos.keySet().forEach(c -> System.console().writer().println(c + CommonConstants.DOT_AND_SPACE + mapOfDtos.get(c).getTitleLong()));
         boolean isWrongSelection = true;
         while (isWrongSelection) {
@@ -102,8 +103,8 @@ public class YtsTorrentUtils {
 
     public static YtsTorrentDTO selectQuality(YtsMovieDTO selectedMovie) {
         YtsTorrentDTO selectedTorrents = null;
-        AtomicInteger i = new AtomicInteger(1);
-        final Map<Integer, YtsTorrentDTO> mapOfDtos = selectedMovie.getTorrents().stream().collect(Collectors.toMap(c -> i.getAndIncrement(), c -> c));
+        AtomicInteger integer = new AtomicInteger(1);
+        final Map<Integer, YtsTorrentDTO> mapOfDtos = selectedMovie.getTorrents().stream().collect(Collectors.toMap(c -> integer.getAndIncrement(), c -> c));
         mapOfDtos.keySet().forEach(c -> System.console().writer().println(c + CommonConstants.DOT_AND_SPACE + mapOfDtos.get(c).getQuality()));
         boolean isWrongSelection = true;
         while (isWrongSelection) {

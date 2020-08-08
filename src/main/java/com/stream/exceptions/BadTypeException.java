@@ -2,7 +2,7 @@ package com.stream.exceptions;
 
 public class BadTypeException extends Exception {
 
-    public BadTypeException(String s){
-        super(s);
+    public BadTypeException(String message){
+        super(message);
     }
 }

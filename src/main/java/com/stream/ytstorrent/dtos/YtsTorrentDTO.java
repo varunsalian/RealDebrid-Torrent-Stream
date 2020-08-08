@@ -70,10 +70,14 @@ public class YtsTorrentDTO {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        YtsTorrentDTO that = (YtsTorrentDTO) o;
+    public boolean equals(Object object) {
+        if (this == object) {
+            return true;
+        }
+        if (object == null || getClass() != object.getClass()) {
+            return false;
+        }
+        YtsTorrentDTO that = (YtsTorrentDTO) object;
         return Objects.equals(url, that.url) &&
                 Objects.equals(hash, that.hash) &&
                 Objects.equals(quality, that.quality) &&

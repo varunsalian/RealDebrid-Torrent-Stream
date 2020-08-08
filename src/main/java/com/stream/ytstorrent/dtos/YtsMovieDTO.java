@@ -78,8 +78,12 @@ public class YtsMovieDTO {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         YtsMovieDTO movieDTO = (YtsMovieDTO) o;
         return Objects.equals(id, movieDTO.id) &&
                 Objects.equals(url, movieDTO.url) &&

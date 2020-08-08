@@ -56,14 +56,16 @@ public class DownloadTask implements Runnable {
 
     private  void unzip(String zipFilePath, String destDir) {
         File dir = new File(destDir);
-        if(!dir.exists()) dir.mkdirs();
+        if(!dir.exists()) {
+            dir.mkdirs();
+        }
         FileInputStream fis;
         byte[] buffer = new byte[1024];
         try {
             fis = new FileInputStream(zipFilePath);
             ZipInputStream zis = new ZipInputStream(fis);
-            ZipEntry ze = zis.getNextEntry();
-            while(ze != null){
+            ZipEntry zipEntry = zis.getNextEntry();
+            while(zipEntry != null){
                 String filename = this.fileName + CommonConstants.SRT_EXTENSION;
                 File newFile = new File(destDir + File.separator + filename);
                 new File(newFile.getParent()).mkdirs();
@@ -74,7 +76,7 @@ public class DownloadTask implements Runnable {
                 }
                 fos.close();
                 zis.closeEntry();
-                ze = zis.getNextEntry();
+                zipEntry = zis.getNextEntry();
             }
             zis.closeEntry();
             zis.close();
