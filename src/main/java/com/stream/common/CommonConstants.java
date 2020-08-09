@@ -81,7 +81,7 @@ public final class CommonConstants {
     public static final String SUBS_LANGUAGE = "language";
     public static final String YTS_SUBS_SOURCE = "data/ytssubs.json";
     public static final String SUBS_ENGLISH = "English";
-    public static final String SUBS_ROOT_FOLDER = "subtitle";
+    public static final String SUBS_ROOT_FOLDER = "support/subtitle";
     public static final String SUBS_COMPRESSED_FOLDER = "support/subtitle/compressed/";
     public static final String SUBS_UNCOMPRESSED_FOLDER = "support/subtitle/uncompressed/";
     public static final String SUBS_DOWNLOAD_LINK = "link";
