@@ -1,7 +1,7 @@
 package com.stream.common;
 
 
-public class CommonConstants {
+public final class CommonConstants {
 
     //HTTP REQUEST CONSTANTS
     public static final String HTTP_GET = "GET";

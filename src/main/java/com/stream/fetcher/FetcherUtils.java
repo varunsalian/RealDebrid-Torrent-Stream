@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class FetcherUtils {
+public final class FetcherUtils {
     public static Document getScrapDataFromUrl(String url) throws IOException {
         Connection.Response response = Jsoup.connect(url)
                 .ignoreContentType(true)

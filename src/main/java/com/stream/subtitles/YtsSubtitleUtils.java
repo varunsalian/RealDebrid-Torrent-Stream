@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-public class YtsSubtitleUtils {
+public final class YtsSubtitleUtils {
 
     private static Logger logger = Logger.getLogger(YtsSubtitleUtils.class.getName());
 

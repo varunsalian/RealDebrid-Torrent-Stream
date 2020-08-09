@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.stream.common.CommonUtils;
 import com.stream.common.CredentialsDTO;
+import com.stream.exceptions.ConnectionException;
 import com.stream.exceptions.RealDebridException;
 import com.stream.realdebrid.dtos.*;
 import com.stream.ytstorrent.dtos.YtsMovieDTO;
@@ -19,11 +20,11 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
 
-public class DebridUtils {
+public final class DebridUtils {
 
     private static Logger logger = Logger.getLogger(DebridUtils.class.getName());
 
-    private static  String repeatedCallToGetSecretId(AuthenticationDTO authenticationDTO) throws IOException, InterruptedException {
+    private static  String repeatedCallToGetSecretId(AuthenticationDTO authenticationDTO) throws IOException, InterruptedException, ConnectionException {
         URL url1 = new URL(CommonConstants.DEBRID_OAUTH_URL + CommonConstants.DEBRID_SECRET_ID_PATH+ authenticationDTO.getDeviceCode());
         HttpURLConnection httpURLConnection;
         for(int i=0;i<120;i++) {
@@ -32,7 +33,7 @@ public class DebridUtils {
                 return CommonUtils.readJSON(httpURLConnection.getInputStream());
             }
             else if(httpURLConnection.getResponseCode()==400) {
-                throw new RuntimeException(CommonConstants.URL_INVALID);
+                throw new ConnectionException(CommonConstants.URL_INVALID);
             }
             else {
                 System.console().writer().println(httpURLConnection.getResponseCode() + "   " + httpURLConnection.getResponseMessage());
@@ -164,10 +165,10 @@ public class DebridUtils {
         return objectMapper;
     }
 
-    private static void dooer() throws IOException, InterruptedException {
+    private static void dooer() throws IOException, InterruptedException, ConnectionException {
         AuthenticationDTO authenticationDTO = getAuthenticationDTO();
         if (authenticationDTO==null) {
-            throw new RuntimeException(CommonConstants.ERROR_AUTHENTICATION_CONNECTION_FAILED);
+            throw new ConnectionException(CommonConstants.ERROR_AUTHENTICATION_CONNECTION_FAILED);
         }
         File dataDirectory = new File(CommonConstants.SUPPORT_DIRECTORY);
         if(!dataDirectory.exists()) {
@@ -176,7 +177,7 @@ public class DebridUtils {
         CommonUtils.serializeAnObject(CommonConstants.AUTHENTICATION_TXT, authenticationDTO);
         String jsonString = repeatedCallToGetSecretId(authenticationDTO);
         if (jsonString==null) {
-            throw new RuntimeException(CommonConstants.ERROR_AUTHENTICATION_CONNECTION_FAILED);
+            throw new ConnectionException(CommonConstants.ERROR_AUTHENTICATION_CONNECTION_FAILED);
         }
 
         ObjectMapper objectMapper = getObjectMapper();
@@ -186,7 +187,7 @@ public class DebridUtils {
 
         jsonString = postAndGetAccessToken(clientDTO.getClientID(), clientDTO.getClientSecret(), authenticationDTO.getDeviceCode(), CommonConstants.GRANT_TYPE_URL);
         if(jsonString==null){
-            throw new RuntimeException(CommonConstants.ERROR_SESSION_TIMED_OUT);
+            throw new ConnectionException(CommonConstants.ERROR_SESSION_TIMED_OUT);
         }
         TokenDTO tokenDTO = objectMapper.readValue(jsonString, TokenDTO.class);
         System.console().writer().println(tokenDTO);
@@ -225,7 +226,7 @@ public class DebridUtils {
         throw new RealDebridException("File not available in the server");
     }
 
-    public static void removeNonInstantlyAvailableTorrents(List<YtsMovieDTO> movieDTOS) throws IOException {
+    public static void removeNonInstantlyAvailableTorrents(List<YtsMovieDTO> movieDTOS) throws IOException, ConnectionException {
         List<String> hashes = getHashesOfTorrentsFromMovieDTO(movieDTOS);
         String hashesString = CommonUtils.convertHashesToRequestUrl(hashes);
         String json = getRequestToCheckInstantAvailability(hashesString);
@@ -238,10 +239,10 @@ public class DebridUtils {
         movieDTOS.removeIf(movieDTO -> movieDTO.getTorrents().isEmpty());
     }
 
-    private static String getRequestToCheckInstantAvailability(String hashesString) throws IOException {
+    private static String getRequestToCheckInstantAvailability(String hashesString) throws IOException, ConnectionException {
         String accessToken = CredentialsDTO.getInstance().getTokenDTO().getAccessToken();
         if(accessToken==null) {
-            throw new RuntimeException("Credentials Unavailable");
+            throw new ConnectionException("Credentials Unavailable");
         }
         HttpURLConnection checkedConnection = CommonUtils.getHttpUrlConnection(new URL(CommonConstants.DEBRID_API_URL + CommonConstants.DEBRID_TORRENT_INSTANT_AVAILABILITY_PATH + hashesString), accessToken);
         return CommonUtils.readJSON(checkedConnection.getInputStream());
@@ -274,7 +275,7 @@ public class DebridUtils {
             credentialsDTO.setAuthenticationDTO(authenticationDTO);
             credentialsDTO.setClientDTO(clientDTO);
             credentialsDTO.setTokenDTO(tokenDTO);
-        } catch (InterruptedException | IOException | ClassNotFoundException e) {
+        } catch (InterruptedException | IOException | ClassNotFoundException | ConnectionException e) {
             logger.warning(e.getMessage());
         }
     }

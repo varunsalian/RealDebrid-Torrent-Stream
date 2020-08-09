@@ -13,7 +13,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.logging.Logger;
 
-public class CommonUtils {
+public final class CommonUtils {
 
     private static Logger logger = Logger.getLogger(DebridUtils.class.getName());
 

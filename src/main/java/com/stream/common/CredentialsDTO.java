@@ -6,7 +6,7 @@ import com.stream.realdebrid.dtos.TokenDTO;
 
 import java.util.Objects;
 
-public class CredentialsDTO {
+public final class CredentialsDTO {
 
     private AuthenticationDTO authenticationDTO;
     private ClientDTO clientDTO;

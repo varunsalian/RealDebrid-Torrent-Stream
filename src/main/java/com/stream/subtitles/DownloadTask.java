@@ -2,6 +2,7 @@ package com.stream.subtitles;
 
 import com.stream.common.CommonConstants;
 import com.stream.common.CommonUtils;
+import com.stream.exceptions.ConnectionException;
 import org.jsoup.nodes.Document;
 
 import java.io.*;
@@ -14,9 +15,9 @@ import java.util.zip.ZipInputStream;
 
 public class DownloadTask implements Runnable {
 
-    private String link;
-    private String fileName;
-    private String imdbID;
+    private final String link;
+    private final String fileName;
+    private final String imdbID;
     private static Logger logger = Logger.getLogger(DownloadTask.class.getName());
 
 
@@ -29,15 +30,15 @@ public class DownloadTask implements Runnable {
             String filePath = CommonConstants.SUBS_COMPRESSED_FOLDER + imdbID + CommonConstants.FORWARD_SLASH +fileName + CommonConstants.ZIP_EXTENSION;
             unzip(filePath, CommonConstants.SUBS_UNCOMPRESSED_FOLDER+imdbID);
             deleteFile(CommonConstants.SUBS_COMPRESSED_FOLDER + imdbID + CommonConstants.FORWARD_SLASH + fileName + CommonConstants.ZIP_EXTENSION);
-        } catch (IOException e) {
+        } catch (IOException | ConnectionException e) {
             logger.warning(e.getMessage());
         }
     }
 
-    private void deleteFile(String path) {
+    private void deleteFile(String path) throws ConnectionException {
         File file = new File(path);
         if(file.exists() && !file.delete()) {
-            throw new RuntimeException("Unable to delete subtitle file");
+            throw new ConnectionException("Unable to delete subtitle file");
         }
     }
 

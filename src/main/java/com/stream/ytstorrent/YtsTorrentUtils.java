@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.stream.common.CommonConstants;
 import com.stream.common.CommonUtils;
+import com.stream.exceptions.ConnectionException;
 import com.stream.exceptions.ItemNotFoundException;
 import com.stream.realdebrid.DebridUtils;
 import com.stream.ytstorrent.dtos.YtsMovieDTO;
@@ -20,7 +21,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-public class YtsTorrentUtils {
+public final class YtsTorrentUtils {
     private static Logger logger = Logger.getLogger(YtsTorrentUtils.class.getName());
 
     public static String magnetGenerator(String torrentHash, String urlEncodedMovieName) {
@@ -64,15 +65,15 @@ public class YtsTorrentUtils {
                 jsonString = CommonUtils.readJSON(conn.getInputStream());
                 dtos = YtsTorrentUtils.getMovieDataDtoFromJson(jsonString);
             } else {
-                throw new RuntimeException("HttpResponseCode: " + conn.getResponseCode());
+                throw new ConnectionException("HttpResponseCode: " + conn.getResponseCode());
             }
-        } catch (IOException e) {
+        } catch (IOException | ConnectionException e) {
             logger.warning(e.getMessage());
         }
         return dtos;
     }
 
-    public static YtsMovieDTO searchAndSelectMovie(String searchQuery) throws IOException, ItemNotFoundException {
+    public static YtsMovieDTO searchAndSelectMovie(String searchQuery) throws IOException, ItemNotFoundException, ConnectionException {
         YtsMovieDTO selectedMovie = null;
         if (searchQuery != null) {
             List<YtsMovieDTO> movieDTOS = YtsTorrentUtils.ytsTorrentSearch(searchQuery);
