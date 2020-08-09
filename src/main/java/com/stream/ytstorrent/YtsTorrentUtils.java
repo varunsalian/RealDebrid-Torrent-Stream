@@ -50,6 +50,7 @@ public final class YtsTorrentUtils {
     }
 
     private static Integer askUserOption() {
+        //IF USING THROUGH AN IDE REPLACE ALL SYSTEM.CONSOLE WITH SYSTEM.OUT
         System.console().writer().println(CommonConstants.USER_INPUT_SELECT_OPTION);
         return Integer.parseInt(System.console().readLine());
     }
