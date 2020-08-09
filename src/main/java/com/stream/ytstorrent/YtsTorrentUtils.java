@@ -50,9 +50,8 @@ public final class YtsTorrentUtils {
     }
 
     private static Integer askUserOption() {
-        //IF USING THROUGH AN IDE REPLACE ALL SYSTEM.CONSOLE WITH SYSTEM.OUT
-        System.console().writer().println(CommonConstants.USER_INPUT_SELECT_OPTION);
-        return Integer.parseInt(System.console().readLine());
+        CommonUtils.print(CommonConstants.USER_INPUT_SELECT_OPTION);
+        return Integer.parseInt(CommonUtils.read());
     }
 
     private static List<YtsMovieDTO> ytsTorrentSearch(String searchQuery) throws ItemNotFoundException {
@@ -90,7 +89,7 @@ public final class YtsTorrentUtils {
         YtsMovieDTO selectedMovie = null;
         AtomicInteger integer = new AtomicInteger(1);
         final Map<Integer, YtsMovieDTO> mapOfDtos = movieDTOS.stream().collect(Collectors.toMap(c -> integer.getAndIncrement(), c -> c));
-        mapOfDtos.keySet().forEach(c -> System.console().writer().println(c + CommonConstants.DOT_AND_SPACE + mapOfDtos.get(c).getTitleLong()));
+        mapOfDtos.keySet().forEach(c -> CommonUtils.print(c + CommonConstants.DOT_AND_SPACE + mapOfDtos.get(c).getTitleLong()));
         boolean isWrongSelection = true;
         while (isWrongSelection) {
             Integer selection = YtsTorrentUtils.askUserOption();
@@ -106,7 +105,7 @@ public final class YtsTorrentUtils {
         YtsTorrentDTO selectedTorrents = null;
         AtomicInteger integer = new AtomicInteger(1);
         final Map<Integer, YtsTorrentDTO> mapOfDtos = selectedMovie.getTorrents().stream().collect(Collectors.toMap(c -> integer.getAndIncrement(), c -> c));
-        mapOfDtos.keySet().forEach(c -> System.console().writer().println(c + CommonConstants.DOT_AND_SPACE + mapOfDtos.get(c).getQuality()));
+        mapOfDtos.keySet().forEach(c -> CommonUtils.print(c + CommonConstants.DOT_AND_SPACE + mapOfDtos.get(c).getQuality()));
         boolean isWrongSelection = true;
         while (isWrongSelection) {
             Integer selection = YtsTorrentUtils.askUserOption();

@@ -48,8 +48,8 @@ public final class CommonUtils {
     }
 
     public static String askUserSearchQuery() {
-        System.console().writer().println(CommonConstants.USER_INPUT_MOVIE);
-        String searchQuery = System.console().readLine();
+        CommonUtils.print(CommonConstants.USER_INPUT_MOVIE);
+        String searchQuery = CommonUtils.read();
         searchQuery = searchQuery.replace(CommonConstants.STRING_SPACE, CommonConstants.STRING_UNDERSCORE);
         return searchQuery;
     }
@@ -133,6 +133,25 @@ public final class CommonUtils {
         if(!file.exists()) {
             file.mkdirs();
         }
+    }
+
+    public static void print(String data){
+        if(System.console()!=null){
+            System.console().writer().println(data);
+        } else {
+            System.out.println(data);
+        }
+    }
+
+    public static String read(){
+        String data;
+        if(System.console()!=null){
+            data = System.console().readLine();
+        } else {
+            Scanner scanner = new Scanner(System.in);
+            data = scanner.nextLine();
+        }
+        return data;
     }
 
 }

@@ -36,8 +36,8 @@ public final class DebridUtils {
                 throw new ConnectionException(CommonConstants.URL_INVALID);
             }
             else {
-                System.console().writer().println(httpURLConnection.getResponseCode() + "   " + httpURLConnection.getResponseMessage());
-                System.console().writer().println(CommonConstants.ERROR);
+                CommonUtils.print(httpURLConnection.getResponseCode() + "   " + httpURLConnection.getResponseMessage());
+                CommonUtils.print(CommonConstants.ERROR);
             }
             Thread.sleep(5000);
         }
@@ -151,7 +151,7 @@ public final class DebridUtils {
         if(httpURLConnection.getResponseCode()==200) {
             String jsonString = CommonUtils.readJSON(httpURLConnection.getInputStream());
             AuthenticationDTO authenticationDTO = objectMapper.readValue(jsonString, AuthenticationDTO.class);
-            System.console().writer().println(CommonConstants.USER_INPUT_GOTO+ authenticationDTO.getVerificationUrl() + CommonConstants.USER_INPUT_ENTER_CODE + authenticationDTO.getUserCode());
+            CommonUtils.print(CommonConstants.USER_INPUT_GOTO+ authenticationDTO.getVerificationUrl() + CommonConstants.USER_INPUT_ENTER_CODE + authenticationDTO.getUserCode());
             return authenticationDTO;
         }
         return null;
@@ -182,7 +182,7 @@ public final class DebridUtils {
 
         ObjectMapper objectMapper = getObjectMapper();
         ClientDTO clientDTO = objectMapper.readValue(jsonString,ClientDTO.class);
-        System.console().writer().println(clientDTO.toString());
+        CommonUtils.print(clientDTO.toString());
         CommonUtils.serializeAnObject(CommonConstants.CREDENTIALS_TXT, clientDTO);
 
         jsonString = postAndGetAccessToken(clientDTO.getClientID(), clientDTO.getClientSecret(), authenticationDTO.getDeviceCode(), CommonConstants.GRANT_TYPE_URL);
@@ -190,7 +190,7 @@ public final class DebridUtils {
             throw new ConnectionException(CommonConstants.ERROR_SESSION_TIMED_OUT);
         }
         TokenDTO tokenDTO = objectMapper.readValue(jsonString, TokenDTO.class);
-        System.console().writer().println(tokenDTO);
+        CommonUtils.print(tokenDTO.toString());
     }
 
     private static boolean checkIfFileExists(String fileName){
@@ -233,9 +233,7 @@ public final class DebridUtils {
         JSONObject jsonObject = new JSONObject(json);
         Map instantAvailabilityMap = jsonObject.toMap();
 
-        movieDTOS.forEach(movieDTO -> {
-            movieDTO.getTorrents().removeIf(torrentDTO -> !(instantAvailabilityMap.get(torrentDTO.getHash().toLowerCase()) instanceof Map));
-        });
+        movieDTOS.forEach(movieDTO -> movieDTO.getTorrents().removeIf(torrentDTO -> !(instantAvailabilityMap.get(torrentDTO.getHash().toLowerCase()) instanceof Map)));
         movieDTOS.removeIf(movieDTO -> movieDTO.getTorrents().isEmpty());
     }
 
