@@ -48,4 +48,8 @@ public class TorrentFilesDTO {
                 ", selected=" + selected +
                 '}';
     }
+
+    public TorrentFilesDTO(){
+
+    }
 }

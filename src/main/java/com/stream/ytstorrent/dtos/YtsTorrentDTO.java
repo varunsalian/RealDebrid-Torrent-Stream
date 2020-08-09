@@ -168,4 +168,8 @@ public class YtsTorrentDTO {
             return torrentDTO;
         }
     }
+
+    public YtsTorrentDTO(){
+
+    }
 }

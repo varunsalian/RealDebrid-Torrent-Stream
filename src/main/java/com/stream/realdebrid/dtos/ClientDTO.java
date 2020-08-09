@@ -36,4 +36,7 @@ public class ClientDTO implements Serializable {
         this.clientSecret = clientSecret;
     }
 
+    public ClientDTO(){
+
+    }
 }

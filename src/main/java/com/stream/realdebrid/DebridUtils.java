@@ -165,9 +165,6 @@ public class DebridUtils {
     }
 
     private static void dooer() throws IOException, InterruptedException {
-        ObjectMapper objectMapper = getObjectMapper();
-        String jsonString;
-
         AuthenticationDTO authenticationDTO = getAuthenticationDTO();
         if (authenticationDTO==null) {
             throw new RuntimeException(CommonConstants.ERROR_AUTHENTICATION_CONNECTION_FAILED);
@@ -177,11 +174,12 @@ public class DebridUtils {
             dataDirectory.mkdir();
         }
         CommonUtils.serializeAnObject(CommonConstants.AUTHENTICATION_TXT, authenticationDTO);
-
-        jsonString = repeatedCallToGetSecretId(authenticationDTO);
+        String jsonString = repeatedCallToGetSecretId(authenticationDTO);
         if (jsonString==null) {
             throw new RuntimeException(CommonConstants.ERROR_AUTHENTICATION_CONNECTION_FAILED);
         }
+
+        ObjectMapper objectMapper = getObjectMapper();
         ClientDTO clientDTO = objectMapper.readValue(jsonString,ClientDTO.class);
         System.console().writer().println(clientDTO.toString());
         CommonUtils.serializeAnObject(CommonConstants.CREDENTIALS_TXT, clientDTO);
@@ -220,8 +218,9 @@ public class DebridUtils {
 
     public static String getLinkOfSelectedTorrentFromTorrentInfo(TorrentInfoDTO selectedTorrent, List<AllTorrentsInfoDTO> allinfo) throws RealDebridException {
         for(AllTorrentsInfoDTO allTorrentsInfoDTO: allinfo){
-            if(selectedTorrent.getHash().equals(allTorrentsInfoDTO.getHash()) && !allTorrentsInfoDTO.getLinks().isEmpty())
+            if(selectedTorrent.getHash().equals(allTorrentsInfoDTO.getHash()) && !allTorrentsInfoDTO.getLinks().isEmpty()) {
                 return allTorrentsInfoDTO.getLinks().get(0);
+            }
         }
         throw new RealDebridException("File not available in the server");
     }

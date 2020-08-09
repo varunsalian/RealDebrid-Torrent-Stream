@@ -301,5 +301,7 @@ public class YtsMovieDTO {
         this.torrents = torrents;
     }
 
+    public YtsMovieDTO() {
 
+    }
 }

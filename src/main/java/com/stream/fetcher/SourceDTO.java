@@ -150,4 +150,7 @@ public class SourceDTO {
         return Objects.hash(sourceName, baseUrl, table, tableContent, additionalContent, additionalContentRelation, additionalContentReference, headerSpecialCase, contentSpecialCase, nextPage);
     }
 
+    public SourceDTO(){
+
+    }
 }

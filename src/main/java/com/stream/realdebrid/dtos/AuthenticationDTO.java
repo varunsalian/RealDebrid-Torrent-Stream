@@ -68,4 +68,8 @@ public class AuthenticationDTO implements Serializable {
         this.expiresIn = authenticationDTO.expiresIn;
         this.verificationUrl = authenticationDTO.verificationUrl;
     }
+
+    public AuthenticationDTO(){
+
+    }
 }

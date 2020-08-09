@@ -29,11 +29,10 @@ public class YtsTorrentUtils {
 
     private static List<YtsMovieDTO> getMovieDataDtoFromJson(String jsonString) throws ItemNotFoundException {
         JSONObject data = (JSONObject) new JSONObject(jsonString).get(CommonConstants.DATA);
-        JSONArray arr = null;
         if(!data.has(CommonConstants.MOVIES)) {
             throw new ItemNotFoundException("NO RESULT FOUND");
         }
-        arr = data.getJSONArray(CommonConstants.MOVIES);
+        JSONArray arr = data.getJSONArray(CommonConstants.MOVIES);
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
         objectMapper.configure(
