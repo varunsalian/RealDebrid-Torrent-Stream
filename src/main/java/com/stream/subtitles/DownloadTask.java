@@ -2,6 +2,7 @@ package com.stream.subtitles;
 
 import com.stream.common.CommonConstants;
 import com.stream.common.CommonUtils;
+import com.stream.exceptions.ConnectionException;
 import org.jsoup.nodes.Document;
 
 import java.io.*;
@@ -14,9 +15,9 @@ import java.util.zip.ZipInputStream;
 
 public class DownloadTask implements Runnable {
 
-    private String link;
-    private String fileName;
-    private String imdbID;
+    private final String link;
+    private final String fileName;
+    private final String imdbID;
     private static Logger logger = Logger.getLogger(DownloadTask.class.getName());
 
 
@@ -29,15 +30,15 @@ public class DownloadTask implements Runnable {
             String filePath = CommonConstants.SUBS_COMPRESSED_FOLDER + imdbID + CommonConstants.FORWARD_SLASH +fileName + CommonConstants.ZIP_EXTENSION;
             unzip(filePath, CommonConstants.SUBS_UNCOMPRESSED_FOLDER+imdbID);
             deleteFile(CommonConstants.SUBS_COMPRESSED_FOLDER + imdbID + CommonConstants.FORWARD_SLASH + fileName + CommonConstants.ZIP_EXTENSION);
-        } catch (IOException e) {
+        } catch (IOException | ConnectionException e) {
             logger.warning(e.getMessage());
         }
     }
 
-    private void deleteFile(String path) {
+    private void deleteFile(String path) throws ConnectionException {
         File file = new File(path);
         if(file.exists() && !file.delete()) {
-            throw new RuntimeException("Unable to delete subtitle file");
+            throw new ConnectionException("Unable to delete subtitle file");
         }
     }
 
@@ -56,14 +57,16 @@ public class DownloadTask implements Runnable {
 
     private  void unzip(String zipFilePath, String destDir) {
         File dir = new File(destDir);
-        if(!dir.exists()) dir.mkdirs();
+        if(!dir.exists()) {
+            dir.mkdirs();
+        }
         FileInputStream fis;
         byte[] buffer = new byte[1024];
         try {
             fis = new FileInputStream(zipFilePath);
             ZipInputStream zis = new ZipInputStream(fis);
-            ZipEntry ze = zis.getNextEntry();
-            while(ze != null){
+            ZipEntry zipEntry = zis.getNextEntry();
+            while(zipEntry != null){
                 String filename = this.fileName + CommonConstants.SRT_EXTENSION;
                 File newFile = new File(destDir + File.separator + filename);
                 new File(newFile.getParent()).mkdirs();
@@ -74,7 +77,7 @@ public class DownloadTask implements Runnable {
                 }
                 fos.close();
                 zis.closeEntry();
-                ze = zis.getNextEntry();
+                zipEntry = zis.getNextEntry();
             }
             zis.closeEntry();
             zis.close();
@@ -85,7 +88,7 @@ public class DownloadTask implements Runnable {
 
     }
 
-    DownloadTask(String link, String fileName, String imdbID){
+    public DownloadTask(String link, String fileName, String imdbID){
         this.link = link;
         this.fileName = fileName;
         this.imdbID = imdbID;

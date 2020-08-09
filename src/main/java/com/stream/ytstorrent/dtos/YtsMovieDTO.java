@@ -1,9 +1,9 @@
-package com.stream.torrent.dtos;
+package com.stream.ytstorrent.dtos;
 
 import java.util.List;
 import java.util.Objects;
 
-public class MovieDTO  {
+public class YtsMovieDTO {
 
     private Integer id;
     private String url;
@@ -22,7 +22,7 @@ public class MovieDTO  {
     private String ytTrailerCode;
     private String language;
     private String mpaRating;
-    private List<TorrentDTO> torrents;
+    private List<YtsTorrentDTO> torrents;
     private String backgroundImage;
     private String backgroundImageOriginal;
     private String smallCoverImage;
@@ -78,9 +78,13 @@ public class MovieDTO  {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        MovieDTO movieDTO = (MovieDTO) o;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        YtsMovieDTO movieDTO = (YtsMovieDTO) o;
         return Objects.equals(id, movieDTO.id) &&
                 Objects.equals(url, movieDTO.url) &&
                 Objects.equals(imdbCode, movieDTO.imdbCode) &&
@@ -289,13 +293,15 @@ public class MovieDTO  {
         this.mpaRating = mpaRating;
     }
 
-    public List<TorrentDTO> getTorrents() {
+    public List<YtsTorrentDTO> getTorrents() {
         return torrents;
     }
 
-    public void setTorrents(List<TorrentDTO> torrents) {
+    public void setTorrents(List<YtsTorrentDTO> torrents) {
         this.torrents = torrents;
     }
 
+    public YtsMovieDTO() {
 
+    }
 }

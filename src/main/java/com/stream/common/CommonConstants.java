@@ -1,7 +1,7 @@
 package com.stream.common;
 
 
-public class CommonConstants {
+public final class CommonConstants {
 
     //HTTP REQUEST CONSTANTS
     public static final String HTTP_GET = "GET";
@@ -81,7 +81,7 @@ public class CommonConstants {
     public static final String SUBS_LANGUAGE = "language";
     public static final String YTS_SUBS_SOURCE = "data/ytssubs.json";
     public static final String SUBS_ENGLISH = "English";
-    public static final String SUBS_ROOT_FOLDER = "subtitle";
+    public static final String SUBS_ROOT_FOLDER = "support/subtitle";
     public static final String SUBS_COMPRESSED_FOLDER = "support/subtitle/compressed/";
     public static final String SUBS_UNCOMPRESSED_FOLDER = "support/subtitle/uncompressed/";
     public static final String SUBS_DOWNLOAD_LINK = "link";
@@ -95,12 +95,10 @@ public class CommonConstants {
     //SYSTEM SPECIFIC CONSTANTS
     public static final String VLC_FILEPATH = "C:\\Program Files\\VideoLAN\\VLC\\vlc.exe";
     public static final String VLC_JSON_KEY = "vlc-path";
+    public static final String APP_PROPERTIES = "app-properties";
 
     //EXCEPTION MESSAGES
     public static final String UNABLE_TO_CONNECT = "Unable to connect ";
-
-    //SYSTEM CONTANTS
-    public static final String APP_PROPERTIES = "app-properties";
 
     //VLC SPECIFIC CONSTANTS
     public static final String VLC_ASPECT_RATIO_KEY = "vlc-aspect-ratio";

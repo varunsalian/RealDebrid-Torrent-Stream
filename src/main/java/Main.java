@@ -7,9 +7,9 @@ import com.stream.exceptions.*;
 import com.stream.realdebrid.DebridUtils;
 import com.stream.realdebrid.dtos.*;
 import com.stream.subtitles.YtsSubtitleUtils;
-import com.stream.torrent.TorrentUtils;
-import com.stream.torrent.dtos.MovieDTO;
-import com.stream.torrent.dtos.TorrentDTO;
+import com.stream.ytstorrent.YtsTorrentUtils;
+import com.stream.ytstorrent.dtos.YtsMovieDTO;
+import com.stream.ytstorrent.dtos.YtsTorrentDTO;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -42,20 +42,21 @@ public class Main {
         TokenDTO tokenDTO = credentialsDTO.getTokenDTO();
 
         //Search for a movie and select the quality
-        MovieDTO selectedMovie = TorrentUtils.searchAndSelectMovie(searchQuery);
-        TorrentDTO selectedTorrent = TorrentUtils.selectQuality(selectedMovie);
+        YtsMovieDTO selectedMovie = YtsTorrentUtils.searchAndSelectMovie(searchQuery);
+        YtsTorrentDTO selectedTorrent = YtsTorrentUtils.selectQuality(selectedMovie);
 
         //Get magnet URI of the torrent, add it to real debrid
         LinkedHashMap<String, String> hashMap = new LinkedHashMap<>();
-        String magnet = TorrentUtils.magnetGenerator(selectedTorrent.getHash(), selectedMovie.getSlug());
+        String magnet = YtsTorrentUtils.magnetGenerator(selectedTorrent.getHash(), selectedMovie.getSlug());
         hashMap.put(CommonConstants.MAGNET, magnet);
-        String a = DebridUtils.postAndGetData(CommonConstants.DEBRID_API_URL + CommonConstants.ADD_MAGNET_PATH, tokenDTO.getAccessToken(), hashMap);
-        AddMagnetDTO magnetDTO = objectMapper.readValue(a, AddMagnetDTO.class);
+        String magnetString = DebridUtils.postAndGetData(CommonConstants.DEBRID_API_URL + CommonConstants.ADD_MAGNET_PATH, tokenDTO.getAccessToken(), hashMap);
+        AddMagnetDTO magnetDTO = objectMapper.readValue(magnetString, AddMagnetDTO.class);
 
         //Check if the torrent is added to rd and fetch the details
         HttpURLConnection httpURLConnection = CommonUtils.getHttpUrlConnection(new URL(magnetDTO.getUri()), tokenDTO.getAccessToken());
-        if (httpURLConnection.getResponseCode() != 200)
+        if (httpURLConnection.getResponseCode() != 200) {
             throw new ConnectionException(CommonConstants.UNABLE_TO_CONNECT + httpURLConnection.getResponseCode());
+        }
         String json = CommonUtils.readJSON(httpURLConnection.getInputStream());
         TorrentInfoDTO torrentInfoDTO = objectMapper.readValue(json, TorrentInfoDTO.class);
 
@@ -67,8 +68,9 @@ public class Main {
 
         //Get the list of all downloaded items, pick the selected one.
         httpURLConnection = CommonUtils.getHttpUrlConnection(new URL(CommonConstants.DEBRID_API_URL + CommonConstants.TORRENT_INFO_PATH), tokenDTO.getAccessToken());
-        if (httpURLConnection.getResponseCode() != 200)
+        if (httpURLConnection.getResponseCode() != 200) {
             throw new ConnectionException(CommonConstants.UNABLE_TO_CONNECT + httpURLConnection.getResponseCode());
+        }
         json = CommonUtils.readJSON(httpURLConnection.getInputStream());
         List<AllTorrentsInfoDTO> allinfo = objectMapper.readValue(json, new TypeReference<List<AllTorrentsInfoDTO>>() {
         });
@@ -77,8 +79,8 @@ public class Main {
         //Unrestrict the link
         LinkedHashMap<String, String> hashMap11 = new LinkedHashMap<>();
         hashMap11.put(CommonConstants.LINK, selectedLink);
-        String s = DebridUtils.postAndGetData(CommonConstants.DEBRID_API_URL + CommonConstants.UNRESTRICT_LINK_PATH, tokenDTO.getAccessToken(), hashMap11);
-        UnrestrictDTO unrestrictDTO = objectMapper.readValue(s, UnrestrictDTO.class);
+        String unrestrictString = DebridUtils.postAndGetData(CommonConstants.DEBRID_API_URL + CommonConstants.UNRESTRICT_LINK_PATH, tokenDTO.getAccessToken(), hashMap11);
+        UnrestrictDTO unrestrictDTO = objectMapper.readValue(unrestrictString, UnrestrictDTO.class);
 
         //play the video via VLC
         YtsSubtitleUtils.addSubtitleFromImdbId(selectedMovie.getImdbCode());

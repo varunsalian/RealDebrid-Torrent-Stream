@@ -18,16 +18,16 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-public class YtsSubtitleUtils {
+public final class YtsSubtitleUtils {
 
     private static Logger logger = Logger.getLogger(YtsSubtitleUtils.class.getName());
 
-    static Document getScrapDataFromUrl(String url) throws IOException {
+    public static Document getScrapDataFromUrl(String url) throws IOException {
         Connection.Response response = Jsoup.connect(url)
                 .ignoreContentType(true)
                 .userAgent(CommonConstants.USER_AGENT_DETAILS)
                 .referrer(CommonConstants.HTTP_REFERRER)
-                .timeout(60000)
+                .timeout(60_000)
                 .followRedirects(true)
                 .execute();
         return response.parse();

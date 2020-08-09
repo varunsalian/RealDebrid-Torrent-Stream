@@ -108,4 +108,8 @@ public class UnrestrictDTO {
                 ", streamable=" + streamable +
                 '}';
     }
+
+    public UnrestrictDTO(){
+
+    }
 }

@@ -48,4 +48,7 @@ public class TokenDTO {
                 '}';
     }
 
+    public TokenDTO(){
+
+    }
 }

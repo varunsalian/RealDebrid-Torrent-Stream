@@ -169,4 +169,8 @@ public class TorrentInfoDTO {
     public void setSeeders(int seeders) {
         this.seeders = seeders;
     }
+
+    public TorrentInfoDTO(){
+
+    }
 }

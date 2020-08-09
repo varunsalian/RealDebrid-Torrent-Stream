@@ -31,4 +31,8 @@ public class AddMagnetDTO implements Serializable {
     public void setUri(String uri) {
         this.uri = uri;
     }
+
+    public AddMagnetDTO(){
+
+    }
 }

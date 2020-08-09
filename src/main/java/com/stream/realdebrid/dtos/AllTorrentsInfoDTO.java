@@ -120,4 +120,8 @@ public class AllTorrentsInfoDTO {
     public void setEnded(String ended) {
         this.ended = ended;
     }
+
+    public AllTorrentsInfoDTO(){
+
+    }
 }
